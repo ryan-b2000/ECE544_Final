@@ -151,6 +151,7 @@ void write_database(char * data) {
   
     uint8_t status = FAIL;
 
+    // package array of char as a json variant object for transmission to Firebase
     JsonVariant jvar = data;
 
     Serial.print("Write to database:\n"); 

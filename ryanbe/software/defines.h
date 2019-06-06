@@ -1,5 +1,13 @@
 // - defines.h
 
+#include "xparameters.h"
+#include <stdint.h>
+#include "nexys4IO.h"
+#include "xintc.h"
+#include "xtmrctr.h"
+#include "xgpio.h"
+
+
 
 /************************** Constant Definitions ****************************/
 
@@ -27,8 +35,8 @@
 
 // GPIO parameters
 #define GPIO_0_DEVICE_ID			XPAR_AXI_GPIO_0_DEVICE_ID
-#define GPIO_0_OUTPUT_0_CHANNEL		1
-#define GPIO_0_OUTPUT_1_CHANNEL		2
+#define GPIO_0_OUTPUT_CHANNEL		1
+#define GPIO_0_INPUT_CHANNEL		2
 
 // Interrupt Controller parameters
 #define INTC_DEVICE_ID			XPAR_INTC_0_DEVICE_ID
@@ -36,3 +44,11 @@
 // UART parameters
 #define UART1_DEVICE_ID			XPAR_UARTLITE_1_DEVICE_ID
 #define UART1_BASEADDR			XPAR_UARTLITE_1_BASEADDR
+
+
+/************************** Variable Definitions ****************************/
+// Microblaze peripheral instances
+
+XIntc 		IntrptCtlrInst;				// Interrupt Controller instance
+XTmrCtr		AXITimerInst;				// PWM timer instance
+XGpio		GPIOInst0;					// GPIO instance

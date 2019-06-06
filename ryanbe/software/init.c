@@ -1,9 +1,12 @@
 // - init.c
 
+#include "init.h"
+
+
 /**
  * 		Initialization functions for the embedded system.
  */
- *
+
 
 
 /****************************************************************************/

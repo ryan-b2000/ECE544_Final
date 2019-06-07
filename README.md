@@ -2,8 +2,8 @@
 
 List of Directories:
 
--ryanbe     = Bentz folder
-_ryanbo     = Bornhorst folder
+ryanbe      = Bentz folder
+ryanbo      = Bornhorst folder
 
 android     = the project folder for the Android app project
 

@@ -1,0 +1,20 @@
+#-----------------------------------------------------------
+# Vivado v2018.2 (64-bit)
+# SW Build 2258646 on Thu Jun 14 20:03:12 MDT 2018
+# IP Build 2256618 on Thu Jun 14 22:10:49 MDT 2018
+# Start of session at: Fri Jun  7 14:33:01 2019
+# Process ID: 52316
+# Current directory: C:/Users/Public/Vivado/ECE544_PROJv3/ip_repo
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent42956 C:\Users\Public\Vivado\ECE544_PROJv3\ip_repo\edit_CameraIP_v1_0.xpr
+# Log file: C:/Users/Public/Vivado/ECE544_PROJv3/ip_repo/vivado.log
+# Journal file: C:/Users/Public/Vivado/ECE544_PROJv3/ip_repo\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project C:/Users/Public/Vivado/ECE544_PROJv3/ip_repo/edit_CameraIP_v1_0.xpr
+update_compile_order -fileset sources_1
+ipx::open_ipxact_file {C:\Users\Public\Vivado\ECE544_PROJv3\ip_repo\CameraIP_1.0\component.xml}
+set_property core_revision 25 [ipx::current_core]
+ipx::create_xgui_files [ipx::current_core]
+ipx::update_checksums [ipx::current_core]
+ipx::save_core [ipx::current_core]
+update_ip_catalog -rebuild -repo_path c:/Users/Public/Vivado/ECE544_PROJv3/ip_repo/CameraIP_1.0

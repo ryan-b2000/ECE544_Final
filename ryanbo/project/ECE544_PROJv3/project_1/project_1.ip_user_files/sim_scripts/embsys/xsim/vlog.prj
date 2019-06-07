@@ -1,0 +1,26 @@
+verilog xil_defaultlib --include "../../../../project_1.srcs/sources_1/bd/embsys/ipshared/b65a" --include "../../../../project_1.srcs/sources_1/bd/embsys/ipshared/ec67/hdl" \
+"../../../../project_1.srcs/sources_1/bd/embsys/ipshared/5bf9/src/rgbpwm.v" \
+"../../../../project_1.srcs/sources_1/bd/embsys/ipshared/5bf9/src/sevensegment.v" \
+"../../../../project_1.srcs/sources_1/bd/embsys/ipshared/5bf9/src/debounce.v" \
+"../../../../project_1.srcs/sources_1/bd/embsys/ipshared/5bf9/hdl/nexys4IO_v2_0_S00_AXI.v" \
+"../../../../project_1.srcs/sources_1/bd/embsys/ipshared/5bf9/hdl/nexys4IO_v2_0.v" \
+"../../../bd/embsys/ip/embsys_nexys4IO_0_0/sim/embsys_nexys4IO_0_0.v" \
+"../../../bd/embsys/ip/embsys_microblaze_0_xlconcat_0/sim/embsys_microblaze_0_xlconcat_0.v" \
+"../../../bd/embsys/ip/embsys_clk_wiz_1_0/embsys_clk_wiz_1_0_clk_wiz.v" \
+"../../../bd/embsys/ip/embsys_clk_wiz_1_0/embsys_clk_wiz_1_0.v" \
+"../../../bd/embsys/ipshared/4aa6/hdl/CameraIP_v1_0_S00_AXI.v" \
+"../../../bd/embsys/ipshared/4aa6/src/OV7670_capture.v" \
+"../../../bd/embsys/ipshared/4aa6/src/OV7670_controller.v" \
+"../../../bd/embsys/ipshared/4aa6/src/OV7670_wrapper.v" \
+"../../../bd/embsys/ipshared/4aa6/src/vga.v" \
+"../../../bd/embsys/ipshared/4aa6/src/i2c_sender.v" \
+"../../../bd/embsys/ipshared/4aa6/hdl/CameraIP_v1_0.v" \
+"../../../bd/embsys/ip/embsys_CameraIP_0_3/sim/embsys_CameraIP_0_3.v" \
+"../../../bd/embsys/ip/embsys_blk_mem_gen_0_0/sim/embsys_blk_mem_gen_0_0.v" \
+"../../../bd/embsys/ip/embsys_xbar_0/sim/embsys_xbar_0.v" \
+"../../../bd/embsys/ip/embsys_lmb_bram_0/sim/embsys_lmb_bram_0.v" \
+"../../../bd/embsys/sim/embsys.v" \
+
+verilog xil_defaultlib "glbl.v"
+
+nosort

@@ -1,0 +1,33 @@
+
+
+/***************************** Include Files *******************************/
+#include "CameraIP.h"
+
+u32 OV7670_BaseAddress;
+
+/************************** Function Definitions ***************************/
+
+int NX4IO_initialize(u32 BaseAddr)
+{
+	OV7670_BaseAddress = BaseAddr;
+	return CAMERAIP_Reg_SelfTest(OV7670_BaseAddress);
+}
+
+
+void NX4IO_setup (void)
+{
+	u32 data;
+
+	data = 0x1280;
+	CAMERAIP_mWriteReg (OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x1280;
+	CAMERAIP_mWriteReg (OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x1204;
+	CAMERAIP_mWriteReg (OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x1100;
+	CAMERAIP_mWriteReg (OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x0c00;
+	CAMERAIP_mWriteReg (OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0xffff;
+	CAMERAIP_mWriteReg (OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+}

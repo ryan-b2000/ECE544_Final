@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenRun Id="synth_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1559941337">
+  <File Type="PA-TCL" Name="CameraIP_v1_0.tcl"/>
+  <File Type="RDS-PROPCONSTRS" Name="CameraIP_v1_0_drc_synth.rpt"/>
+  <File Type="REPORTS-TCL" Name="CameraIP_v1_0_reports.tcl"/>
+  <File Type="RDS-RDS" Name="CameraIP_v1_0.vds"/>
+  <File Type="RDS-UTIL" Name="CameraIP_v1_0_utilization_synth.rpt"/>
+  <File Type="RDS-UTIL-PB" Name="CameraIP_v1_0_utilization_synth.pb"/>
+  <File Type="RDS-DCP" Name="CameraIP_v1_0.dcp"/>
+  <File Type="VDS-TIMINGSUMMARY" Name="CameraIP_v1_0_timing_summary_synth.rpt"/>
+  <File Type="VDS-TIMING-PB" Name="CameraIP_v1_0_timing_summary_synth.pb"/>
+  <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
+    <Filter Type="Srcs"/>
+    <File Path="$PPRDIR/CameraIP_1.0/hdl/CameraIP_v1_0_S00_AXI.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/CameraIP_1.0/src/OV7670_capture.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/CameraIP_1.0/src/OV7670_controller.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/CameraIP_1.0/src/OV7670_wrapper.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/CameraIP_1.0/src/i2c_sender.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/CameraIP_1.0/src/vga.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/CameraIP_1.0/hdl/CameraIP_v1_0.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/CameraIP_1.0/component.xml">
+      <FileInfo SFType="IPXACT"/>
+    </File>
+    <Config>
+      <Option Name="DesignMode" Val="RTL"/>
+      <Option Name="TopModule" Val="CameraIP_v1_0"/>
+      <Option Name="TopRTLFile" Val="$PPRDIR/CameraIP_1.0/hdl/CameraIP_v1_0.v"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+    <Filter Type="Constrs"/>
+    <Config>
+      <Option Name="ConstrsType" Val="XDC"/>
+    </Config>
+  </FileSet>
+  <Strategy Version="1" Minor="2">
+    <StratHandle Name="bestone" Flow="Vivado Synthesis 2018"/>
+    <Step Id="synth_design">
+      <Option Id="Directive">6</Option>
+      <Option Id="ReTiming">1</Option>
+    </Step>
+  </Strategy>
+</GenRun>

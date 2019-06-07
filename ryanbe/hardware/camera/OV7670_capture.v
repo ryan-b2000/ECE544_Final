@@ -5,7 +5,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
 module OV7670_capture(
     input pclk,                 // pixel output clock
     input reset_n,              // reset

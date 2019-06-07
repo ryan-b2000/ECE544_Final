@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@drawable/gradiant_background"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/textview_cam_pos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textview_cam_pos"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <io.feeeei.circleseekbar.CircleSeekBar
+        android:id="@+id/seekBar_position"
+        android:layout_below="@+id/textview_cam_pos"
+        android:layout_width="275dp"
+        android:layout_height="464dp"
+        android:layout_centerHorizontal="true"
+        app:wheel_cur_process="0"
+        app:wheel_has_cache="false"
+        app:wheel_max_process="359"
+        app:wheel_pointer_radius="10dp"
+        app:wheel_shadow_radius="50dp" />
+
+    <TextView
+        android:id="@+id/textview_cam_cap_rate"
+        android:layout_below="@+id/seekBar_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textview_cam_cap_rates"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <com.zhouyou.view.seekbar.SignSeekBar
+        android:id="@+id/seekBar_cap_rate"
+        android:layout_below="@+id/textview_cam_cap_rate"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        app:ssb_section_text_position="bottom_sides"
+        app:ssb_show_progress_in_float="false"
+        app:ssb_show_section_mark="false"
+        app:ssb_show_section_text="true"
+        app:ssb_show_sign="true"
+        app:ssb_show_thumb_text="false"
+        app:ssb_sign_arrow_height="5dp"
+        app:ssb_sign_arrow_width="10dp"
+        app:ssb_sign_border_color="@color/red"
+        app:ssb_sign_border_size="1dp"
+        app:ssb_sign_color="@color/black"
+        app:ssb_sign_show_border="true"/>
+
+    <TextView
+        android:id="@+id/textview_cam_cap_mode"
+        android:layout_below="@+id/seekBar_cap_rate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/switch_cam_mode"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <Switch
+        android:id="@+id/switch_cam_mode"
+        android:layout_below="@+id/textview_cam_cap_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hapticFeedbackEnabled="true"/>
+
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/button_take_photo"
+        android:layout_below="@+id/switch_cam_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:visibility="gone"
+        android:hapticFeedbackEnabled="true"
+        android:layout_centerHorizontal="true"
+        fancy:fb_borderColor="@color/black"
+        fancy:fb_borderWidth="1dp"
+        fancy:fb_defaultColor="@color/purple_0"
+        fancy:fb_focusColor="@color/purple_0"
+        fancy:fb_fontIconResource="&#xf083;"
+        fancy:fb_iconPosition="left"
+        fancy:fb_radius="30dp"
+        fancy:fb_text="@string/capture"
+        fancy:fb_textColor="#FFFFFF" />
+
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/button_set_position"
+        android:layout_width="39dp"
+        android:layout_height="27dp"
+        android:layout_above="@+id/textview_cam_cap_rate"
+        android:layout_marginLeft="0dp"
+        android:layout_toRightOf="@+id/seekBar_position"
+        android:hapticFeedbackEnabled="true"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="5dp"
+        android:visibility="visible"
+        fancy:fb_borderColor="@color/black"
+        fancy:fb_borderWidth="1dp"
+        fancy:fb_defaultColor="@color/purple_0"
+        fancy:fb_focusColor="@color/purple_0"
+        fancy:fb_fontIconResource="&#xf093;"
+        fancy:fb_iconPosition="top"
+        fancy:fb_radius="30dp"
+        fancy:fb_textColor="#FFFFFF" />
+
+</RelativeLayout>

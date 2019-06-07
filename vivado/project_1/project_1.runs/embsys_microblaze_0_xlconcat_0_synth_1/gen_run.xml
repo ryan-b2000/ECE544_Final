@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenRun Id="embsys_microblaze_0_xlconcat_0_synth_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1559441008">
+  <File Type="PA-TCL" Name="embsys_microblaze_0_xlconcat_0.tcl"/>
+  <File Type="REPORTS-TCL" Name="embsys_microblaze_0_xlconcat_0_reports.tcl"/>
+  <File Type="RDS-RDS" Name="embsys_microblaze_0_xlconcat_0.vds"/>
+  <File Type="RDS-UTIL" Name="embsys_microblaze_0_xlconcat_0_utilization_synth.rpt"/>
+  <File Type="RDS-UTIL-PB" Name="embsys_microblaze_0_xlconcat_0_utilization_synth.pb"/>
+  <File Type="RDS-DCP" Name="embsys_microblaze_0_xlconcat_0.dcp"/>
+  <FileSet Name="sources" Type="BlockSrcs" RelSrcDir="$PSRCDIR/embsys_microblaze_0_xlconcat_0">
+    <File Path="$PSRCDIR/sources_1/bd/embsys/ip/embsys_microblaze_0_xlconcat_0/embsys_microblaze_0_xlconcat_0.xci">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="TopModule" Val="embsys_microblaze_0_xlconcat_0"/>
+      <Option Name="UseBlackboxStub" Val="1"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="constrs_in" Type="BlockSrcs" RelSrcDir="$PSRCDIR/embsys_microblaze_0_xlconcat_0">
+    <File Path="$PSRCDIR/sources_1/bd/embsys/ip/embsys_microblaze_0_xlconcat_0/embsys_microblaze_0_xlconcat_0.xci">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="TopModule" Val="embsys_microblaze_0_xlconcat_0"/>
+      <Option Name="UseBlackboxStub" Val="1"/>
+    </Config>
+  </FileSet>
+  <Strategy Version="1" Minor="2">
+    <StratHandle Name="bestone" Flow="Vivado Synthesis 2018"/>
+    <Step Id="synth_design">
+      <Option Id="Directive">6</Option>
+      <Option Id="ReTiming">1</Option>
+    </Step>
+  </Strategy>
+</GenRun>

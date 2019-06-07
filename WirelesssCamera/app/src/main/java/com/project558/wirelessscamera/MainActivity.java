@@ -18,17 +18,18 @@
 
 package com.project558.wirelessscamera;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /** class
  *
@@ -36,26 +37,63 @@ import java.util.ArrayList;
  *      Class for managing UI and data to Firebase.
  *
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PhotoGalleryFragment.onDeleteAdapterCallback{
 
     private static final String TAG = "MainActivity";
-    private static final String ADAPTER_IMAGE_MSG = "image";      // key associated with position value. Packed with bundle when creating fragment
-    private ViewPager mViewPager;
+    private static final String ADAPTER_IMG_MSG = "image";        // key associated with position value. Packed with bundle when creating fragment
+    private static final String ADAPTER_POS_MSG   = "position";     // Key associated with the position of fragment in viewpager.
+    private ViewPager mViewPager;                                   // Declaration of ViewPager object.
 
-    ArrayList<Integer> data = new ArrayList<>();
     public static Integer IMGS[] = {
             R.drawable.camera,
             R.drawable.common_full_open_on_phone
             // Drawable IDs here.
     };
 
+    public static ArrayList<Integer> IMGS22 = new ArrayList<>();
+
 
     FragmentPagerAdapter mAdapterPager;
+
+    /**
+     *  Method overriden in PhotoGalleryFragment.java - this is the interface function for the class.
+     *  This method finds the current visible fragment and deletes it; in response to user
+     *  pressing delete button below image in PhotoGalleryFragment.
+     */
+    @Override
+    public void onDeleteClick(Integer position){
+
+        // For deleting a fragment, I was confused on how to get the handle of the fragment I need to delete.
+        // There is a solid solution in this post:  https://stackoverflow.com/questions/9294603/how-do-i-get-the-currently-displayed-fragment
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        if(fragments != null){
+            for(Fragment fragment: fragments) {
+                if(fragment != null && fragment.isVisible())
+                {
+                    FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
+                    mTransaction.remove(fragment);
+                    mTransaction.commit();
+                    // Remove index from image database. Reupdate the app.
+
+                    IMGS22.remove(position);    // Remove image at specified position.
+
+                    mAdapterPager.notifyDataSetChanged();
+
+                    return;
+
+                }
+            }
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        IMGS22.add(R.drawable.camera);
+        IMGS22.add(R.drawable.common_full_open_on_phone);
 
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -97,6 +135,13 @@ public class MainActivity extends AppCompatActivity {
             NUM_PAGES = IMGS.length + 1;
         }
 
+        //this is called when notifyDataSetChanged() is called
+        @Override
+        public int getItemPosition(Object object) {
+            // refresh all fragments when data set changed
+            return PagerAdapter.POSITION_NONE;
+        }
+
 
         @Override
         public Fragment getItem(int position) {
@@ -108,7 +153,8 @@ public class MainActivity extends AppCompatActivity {
             {
                 FragmentTransaction mTransaction = mFragmentManager.beginTransaction();
                 Bundle bundle = new Bundle();
-                bundle.putInt(ADAPTER_IMAGE_MSG, IMGS[position-1]);
+                bundle.putInt(ADAPTER_IMG_MSG, IMGS22.get(position-1));
+                bundle.putInt(ADAPTER_POS_MSG,position);
                 PhotoGalleryFragment mFrag = new PhotoGalleryFragment();
                 mFrag.setArguments(bundle);
                 mTransaction.commit();
@@ -118,6 +164,11 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
+        /**
+         *  Gets number of pages.
+         *
+         * @return
+         */
         @Override
         public int getCount() {
             return NUM_PAGES;   // Return number of fragments.
@@ -126,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Got this function from following link: https://developer.android.com/training/animation/screen-slide
-    // Created transition animation for viewpager.
+    // Creates transition animation for viewpager.
     public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
         private static final float MIN_SCALE = 0.85f;
         private static final float MIN_ALPHA = 0.5f;
@@ -165,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
 }
 

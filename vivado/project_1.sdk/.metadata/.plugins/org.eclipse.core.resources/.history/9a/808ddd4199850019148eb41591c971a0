@@ -1,0 +1,150 @@
+
+
+/***************************** Include Files *******************************/
+#include "CameraIP.h"
+
+u32 OV7670_BaseAddress;
+
+/************************** Function Definitions ***************************/
+
+int OV7670_initialize(u32 BaseAddress)
+{
+	OV7670_BaseAddress = BaseAddress;
+	return CAMERAIP_Reg_SelfTest(OV7670_BaseAddress);
+}
+
+void OV7670_setup(void)
+{
+	u32 data;
+
+	data = 0x1280;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	CAMERAIP_mReadReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET);
+	usleep(5000 * 1000);
+	data = 0x1280;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	CAMERAIP_mReadReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET);
+	usleep(5000 * 1000);
+	data = 0x1204;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	CAMERAIP_mReadReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET);
+	usleep(5000 * 1000);
+	data = 0x1100;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	CAMERAIP_mReadReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET);
+	usleep(5000 * 1000);
+	data = 0x0c00;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	CAMERAIP_mReadReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET);
+	usleep(5000 * 1000);
+	data = 0x3e00;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	CAMERAIP_mReadReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET);
+	usleep(5000 * 1000);
+	data = 0x8c00;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	CAMERAIP_mReadReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET);
+	usleep(5000 * 1000);
+	data = 0x0400;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	CAMERAIP_mReadReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET);
+	usleep(5000 * 1000);
+	data = 0x40d0;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x3a04;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x1418;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x4f40;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x5034;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x510c;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x5217;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x5329;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x5440;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x581e;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x3dc0;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x1711;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x1861;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x32a4;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x1903;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x1a7b;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x030a;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x030a;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x1e00;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x330b;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x3c78;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x6900;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x7400;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0xb084;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0xb10c;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0xb20e;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0xb380;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x703a;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x7135;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x7211;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x73f0;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0xa202;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x7a20;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x7b10;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x7c1e;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x7d35;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x7e5a;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x7f69;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x8076;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x8180;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x8288;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x838f;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x8496;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x85a3;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x86af;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x87c4;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x88d7;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0x89e8;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+	data = 0xffff;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG0_OFFSET, data);
+}

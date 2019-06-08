@@ -1,6 +1,7 @@
 /** CameraControlFragment.java
  *
  *  Names: Ryan Bentz, Ryan Bornhorst, Andrew Capatina
+ *  Date: 6/7/2019
  *
  *  Description:
  *      File setting up layout and communication for the UI controls
@@ -34,7 +35,7 @@ import io.feeeei.circleseekbar.CircleSeekBar;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
- *
+ *  Class responsible for inflating layout with camera controls.
  *
  */
 public class CameraControlFragment extends Fragment {
@@ -54,6 +55,14 @@ public class CameraControlFragment extends Fragment {
     private int mIntervalSeekProgress   = 0;    // Progress of interval seekbar.
     private int mSwitchModeStatus       = 0;    // Status of switch for manual capture.
 
+    /**
+     *
+     *
+     * @param inflater  layout XML instantiation object
+     * @param container Viewgroup object
+     * @param savedInstanceState Application context. 
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 

@@ -1,5 +1,6 @@
 /**
  *  Names: Ryan Bentz, Ryan Bornhorst, Andrew Capatina
+ *  Date: 6/7/2019
  *
  *  Description:
  *      Main activity for the wireless camera app.
@@ -20,7 +21,7 @@ package com.project558.wirelessscamera;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -34,50 +35,47 @@ import java.util.List;
 /** class
  *
  *  Description:
- *      Class for managing UI and data to Firebase.
+ *      MainActivity that manages the associated fragments with this project.
+ *      This activity also receives images from firebase and passes them to the fragments
+ *      via ScreenSlidePagerAdapter.
  *
  */
 public class MainActivity extends AppCompatActivity implements PhotoGalleryFragment.onDeleteAdapterCallback{
 
     private static final String TAG = "MainActivity";
-    private static final String ADAPTER_IMG_MSG = "image";        // key associated with position value. Packed with bundle when creating fragment
+    private static final String ADAPTER_IMG_MSG = "image";          // key associated with position value. Packed with bundle when creating fragment
     private static final String ADAPTER_POS_MSG   = "position";     // Key associated with the position of fragment in viewpager.
     private ViewPager mViewPager;                                   // Declaration of ViewPager object.
 
-    public static Integer IMGS[] = {
-            R.drawable.camera,
-            R.drawable.common_full_open_on_phone
-            // Drawable IDs here.
-    };
 
-    public static ArrayList<Integer> IMGS22 = new ArrayList<>();
+    public static ArrayList<Integer> IMGS = new ArrayList<>();      // Holds array of images that PhotoGalleryFragment receives.
 
 
-    FragmentPagerAdapter mAdapterPager;
+    ViewPageFragmentAdapter mAdapterPager;      // Fragment manager class declaration.
 
     /**
-     *  Method overriden in PhotoGalleryFragment.java - this is the interface function for the class.
+     *  Method overridden in PhotoGalleryFragment.java - this is the interface function for the class.
      *  This method finds the current visible fragment and deletes it; in response to user
      *  pressing delete button below image in PhotoGalleryFragment.
      */
     @Override
     public void onDeleteClick(Integer position){
 
-        // For deleting a fragment, I was confused on how to get the handle of the fragment I need to delete.
+        // For deleting a fragment, I was confused on how to get handle of the fragment I need to delete.
         // There is a solid solution in this post:  https://stackoverflow.com/questions/9294603/how-do-i-get-the-currently-displayed-fragment
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();  // Getting all current fragment instances.
         if(fragments != null){
-            for(Fragment fragment: fragments) {
-                if(fragment != null && fragment.isVisible())
+            for(Fragment fragment: fragments) {                 // Iterate through list of fragments.
+                if(fragment != null && fragment.isVisible())    // Checking which fragment is currently visible.
                 {
-                    FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
+                    FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();  // Start a transaction for removing the current fragment.
                     mTransaction.remove(fragment);
                     mTransaction.commit();
                     // Remove index from image database. Reupdate the app.
 
-                    IMGS22.remove(position);    // Remove image at specified position.
+                    IMGS.remove(position-1);            // Remove image at specified position from array, not needed.
 
-                    mAdapterPager.notifyDataSetChanged();
+                    mAdapterPager.notifyDataSetChanged();     // Notify adapter that it needs to update the ViewPager. (IMG data change)
 
                     return;
 
@@ -87,19 +85,24 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
 
     }
 
+    /**
+     *  Method for instantiating fragment adapter.
+     *
+     * @param savedInstanceState Application context
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        IMGS22.add(R.drawable.camera);
-        IMGS22.add(R.drawable.common_full_open_on_phone);
+        IMGS.add(R.drawable.camera);
+        IMGS.add(R.drawable.common_full_open_on_phone);
 
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        mAdapterPager = new ScreenSlidePagerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(mAdapterPager);
+        mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());  // Sets transition animation using function provided from Google dev docs.
+        mAdapterPager = new ViewPageFragmentAdapter(getSupportFragmentManager());             // Instantiate an adapter.
+        mViewPager.setAdapter(mAdapterPager);   // Set layout with inflated fragments.
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -124,25 +127,56 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
     /**
      * Pager adapter for instantiating and passing data to fragments.
      */
-    private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
+    private class ViewPageFragmentAdapter extends FragmentStatePagerAdapter {
 
-        private int NUM_PAGES = 0;                     // Number of fragments.
-        private FragmentManager mFragmentManager;
+        private FragmentManager mFragmentManager;   // Local fragment manager variable.
 
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
+        /**
+         *  Adapter constructor.
+         *
+         * @param fm Fragment manager object.
+         */
+        public ViewPageFragmentAdapter(FragmentManager fm) {
             super(fm);
-            this.mFragmentManager = fm;
-            NUM_PAGES = IMGS.length + 1;
+            this.mFragmentManager = fm;     // Saving fragment manager.
         }
 
-        //this is called when notifyDataSetChanged() is called
+
+        /**
+         *  Checks if Fragment is still alive.
+         *  Deletes fragment otherwise.
+         * @param object to be casted to Fragment.
+         * @return "i" is valid fragment position; "POSITION_NONE" indicates fragment is gone.
+         */
         @Override
         public int getItemPosition(Object object) {
-            // refresh all fragments when data set changed
+
+            Fragment f = (Fragment) object;     // Cast the object to a Base Fragment.
+
+            // https://stackoverflow.com/questions/12321617/android-viewpager-move-any-page-to-end-programatically/14822077#14822077
+            // After reading this link the implementation for this function is clear: Check if the fragment still exists at position
+            // it was allocated for; Return POSITION_NONE to indicate the fragment is gone.
+            for(int i = 0; i < getCount(); i++) {   // Get number of fragments.
+
+                // TODO:
+                // I'm kinda confused on how this should work here, because getItem() seems to instantiate a new class rather than get the current references.
+                Fragment item = (Fragment) getItem(i);  // Iterate through fragments and ensure it's gone.
+                if(item.equals(f)) {
+                    // item still exists in dataset; return position
+                    return i;
+                }
+            }
+            // Fragment does not exist at this point.
             return PagerAdapter.POSITION_NONE;
         }
 
 
+        /**
+         * Method to instantiate fragments.
+         *
+         * @param position Position in viewpager for fragment.
+         * @return Fragment object with inflated views or null.
+         */
         @Override
         public Fragment getItem(int position) {
             if(position == 0)
@@ -153,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
             {
                 FragmentTransaction mTransaction = mFragmentManager.beginTransaction();
                 Bundle bundle = new Bundle();
-                bundle.putInt(ADAPTER_IMG_MSG, IMGS22.get(position-1));
+                bundle.putInt(ADAPTER_IMG_MSG, IMGS.get(position-1));
                 bundle.putInt(ADAPTER_POS_MSG,position);
                 PhotoGalleryFragment mFrag = new PhotoGalleryFragment();
                 mFrag.setArguments(bundle);
@@ -171,8 +205,9 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
          */
         @Override
         public int getCount() {
-            return NUM_PAGES;   // Return number of fragments.
+            return IMGS.size() + 1;   // Return number of fragments. Adding one because of cameraControlFragment class.
         }
+
 
     }
 

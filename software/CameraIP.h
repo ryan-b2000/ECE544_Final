@@ -1,4 +1,3 @@
-
 #ifndef CAMERAIP_H
 #define CAMERAIP_H
 

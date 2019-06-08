@@ -13,7 +13,8 @@ module OV7670_capture(
     input [7:0] d,              // camera data
     output [18:0] addr,         // capture address
     output reg [11:0] dout,     // capture data
-    output reg we               // write enable
+    output reg we,              // write enable
+    input freeze_frame
     );
     
     reg [15:0] d_latch;         // data latch
@@ -48,8 +49,11 @@ module OV7670_capture(
             d_latch <= {d_latch[7:0],d};
         
             // increment the address
-            if(wr_hold[1] == 1'b1)
+            if(wr_hold[1] && freeze_frame)
+                address_next <= address_next;
+            else if(wr_hold[1])
                 address_next <= address_next + 1'b1;
+                
         end
     end
         

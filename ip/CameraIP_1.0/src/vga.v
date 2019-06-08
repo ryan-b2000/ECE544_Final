@@ -18,14 +18,14 @@ module vga(
     );
     
     localparam hRez = 640;              // horizontal resolution
-    localparam hStartSync = 640+16; 
-    localparam hEndSync = 640+16+96;    // resolution + sync time
-    localparam hMaxCount = 800;         // maximum hcount
+    localparam hStartSync = hRez+16; 
+    localparam hEndSync = hRez+16+96;    // resolution + sync time
+    localparam hMaxCount = hRez+16+96+48;         // maximum hcount
     
     localparam vRez = 480;              // vertical resolution
-    localparam vStartSync = 480+10;
-    localparam vEndSync = 480+10+2;     // vertical resolution + sync time
-    localparam vMaxCount = 480+10+2+33;         // maximum vcount
+    localparam vStartSync = vRez+10;
+    localparam vEndSync = vRez+10+2;     // vertical resolution + sync time
+    localparam vMaxCount = vRez+10+2+33;         // maximum vcount
     
     localparam hsync_active = 1'b0;
     localparam vsync_active = 1'b0;
@@ -44,9 +44,9 @@ module vga(
         end else begin
             // setup horizontal and vertical counters
             frame_addr <= address;
-            if(hCounter == hMaxCount - 1) begin
+            if(hCounter == hMaxCount - 1) begin // hMax
                 hCounter <= 0;
-                if(vCounter == vMaxCount - 1)
+                if(vCounter == vMaxCount - 1) // vMax
                     vCounter <= 0;
                 else
                     vCounter <= vCounter + 1'b1;
@@ -65,9 +65,9 @@ module vga(
             end
             
             // vertical and horizontal synchronization
-            if(vCounter >= vRez) begin
+            if(vCounter >= vRez) begin // was >=
                 address <= 0;
-                blank <= 1'b1;
+                blank <= 1'b1; // was 1
             end else begin
                 if(hCounter < hRez) begin
                     blank <= 1'b0;

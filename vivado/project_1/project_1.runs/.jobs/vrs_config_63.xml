@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<Runs Version="1" Minor="0">
+	<Run Id="embsys_dlmb_bram_if_cntlr_0_synth_1" LaunchDir="C:/Users/Public/Vivado/ECE544_PROJv3/project_1/project_1.runs/embsys_dlmb_bram_if_cntlr_0_synth_1" FlowId="Vivado_Synthesis" FromStepId="vivado" ToStepId="vivado"/>
+	<Run Id="embsys_ilmb_bram_if_cntlr_0_synth_1" LaunchDir="C:/Users/Public/Vivado/ECE544_PROJv3/project_1/project_1.runs/embsys_ilmb_bram_if_cntlr_0_synth_1" FlowId="Vivado_Synthesis" FromStepId="vivado" ToStepId="vivado"/>
+	<Run Id="embsys_lmb_bram_0_synth_1" LaunchDir="C:/Users/Public/Vivado/ECE544_PROJv3/project_1/project_1.runs/embsys_lmb_bram_0_synth_1" FlowId="Vivado_Synthesis" FromStepId="vivado" ToStepId="vivado"/>
+</Runs>
+

@@ -20,7 +20,6 @@ public class FirebaseData {
     public int mCapRate;
     public int mIsManual;
     public String TIMESTAMP;
-    public Map<String, Boolean> temp = new HashMap<>();
 
     public FirebaseData() {
         // Default constructor required for calls to DataSnapshot.getValue(FirebaseData.class)

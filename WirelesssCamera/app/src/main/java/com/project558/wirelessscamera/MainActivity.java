@@ -15,6 +15,11 @@
  *
  *      https://github.com/bumptech/glide
  *
+ *      Helpful Links:
+ *      - Has useful info on the purpose of getItemPosition in adapter class.
+ *          https://stackoverflow.com/questions/10728076/when-should-getitemposition-consider-changes-of-an-items-position
+ *      - Fragment communication:
+ *          http://simpledeveloper.com/how-to-communicate-between-fragments-and-activities/
  */
 
 package com.project558.wirelessscamera;
@@ -166,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
                     return i;
                 }
             }
+
             // Fragment does not exist at this point.
             return PagerAdapter.POSITION_NONE;
         }

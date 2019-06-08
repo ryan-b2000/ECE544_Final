@@ -5,5 +5,6 @@
     <string name="switch_cam_mode"> Manual Capture Mode</string>
     <string name="capture">CAPTURE</string>
     <string name="text_option">Image Options</string>
+    <string name="string_loading">Loading...</string>
 
 </resources>

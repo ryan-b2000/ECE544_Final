@@ -60,7 +60,7 @@ public class CameraControlFragment extends Fragment {
      *
      * @param inflater  layout XML instantiation object
      * @param container Viewgroup object
-     * @param savedInstanceState Application context. 
+     * @param savedInstanceState Application context.
      * @return
      */
     @Override

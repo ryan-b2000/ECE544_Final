@@ -1,8 +1,8 @@
 Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2018.2 (win64) Build 2258646 Thu Jun 14 20:03:12 MDT 2018
-| Date             : Fri Jun  7 14:07:07 2019
-| Host             : DESKTOP-976N9II running 64-bit major release  (build 9200)
+| Date             : Fri Jun  7 17:39:13 2019
+| Host             : Computer running 64-bit major release  (build 9200)
 | Command          : report_power -file n4fpga_power_routed.rpt -pb n4fpga_power_summary_routed.pb -rpx n4fpga_power_routed.rpx
 | Design           : n4fpga
 | Device           : xc7a100tcsg324-1
@@ -53,8 +53,8 @@ Table of Contents
 | On-Chip                  | Power (W) | Used     | Available | Utilization (%) |
 +--------------------------+-----------+----------+-----------+-----------------+
 | Clocks                   |     0.009 |       14 |       --- |             --- |
-| Slice Logic              |     0.002 |     7368 |       --- |             --- |
-|   LUT as Logic           |     0.001 |     2615 |     63400 |            4.12 |
+| Slice Logic              |     0.002 |     7365 |       --- |             --- |
+|   LUT as Logic           |     0.001 |     2612 |     63400 |            4.12 |
 |   LUT as Distributed RAM |    <0.001 |       96 |     19000 |            0.51 |
 |   CARRY4                 |    <0.001 |       96 |     15850 |            0.61 |
 |   Register               |    <0.001 |     2809 |    126800 |            2.22 |
@@ -62,7 +62,7 @@ Table of Contents
 |   BUFG                   |    <0.001 |        1 |        32 |            3.13 |
 |   LUT as Shift Register  |    <0.001 |       78 |     19000 |            0.41 |
 |   Others                 |    <0.001 |      832 |       --- |             --- |
-| Signals                  |     0.003 |     5496 |       --- |             --- |
+| Signals                  |     0.003 |     5504 |       --- |             --- |
 | Block RAM                |     0.007 |    119.5 |       135 |           88.52 |
 | MMCM                     |     0.106 |        1 |         6 |           16.67 |
 | I/O                      |     0.004 |       71 |       210 |           33.81 |
@@ -77,7 +77,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) |
 +-----------+-------------+-----------+-------------+------------+
-| Vccint    |       1.000 |     0.038 |       0.020 |      0.018 |
+| Vccint    |       1.000 |     0.039 |       0.021 |      0.018 |
 | Vccaux    |       1.800 |     0.077 |       0.059 |      0.018 |
 | Vcco33    |       3.300 |     0.005 |       0.001 |      0.004 |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |
@@ -158,7 +158,7 @@ Table of Contents
 | Name                                                                               | Power (W) |
 +------------------------------------------------------------------------------------+-----------+
 | n4fpga                                                                             |     0.130 |
-|   embsys                                                                           |     0.126 |
+|   embsys                                                                           |     0.127 |
 |     CameraIP_0                                                                     |     0.001 |
 |       inst                                                                         |     0.001 |
 |         CameraIP_v1_0_S00_AXI_inst                                                 |     0.001 |
@@ -420,7 +420,7 @@ Table of Contents
 |       U0                                                                           |     0.006 |
 |         MicroBlaze_Core_I                                                          |     0.006 |
 |           Performance.Core                                                         |     0.006 |
-|             Data_Flow_I                                                            |     0.002 |
+|             Data_Flow_I                                                            |     0.003 |
 |               ALU_I                                                                |    <0.001 |
 |                 Using_FPGA.ALL_Bits[0].ALU_Bit_I1                                  |    <0.001 |
 |                   Last_Bit.I_ALU_LUT_2                                             |    <0.001 |

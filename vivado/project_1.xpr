@@ -22,10 +22,9 @@
     <Option Name="ActiveSimSet" Val="sim_1"/>
     <Option Name="DefaultLib" Val="xil_defaultlib"/>
     <Option Name="ProjectType" Val="Default"/>
-    <Option Name="IPRepoPath" Val="$PPRDIR/../ip_repo/CameraIP_1.0"/>
-    <Option Name="IPRepoPath" Val="$PPRDIR/../ip_repo/CameraIP_1.0"/>
-    <Option Name="IPRepoPath" Val="$PPRDIR/../../../../Ryan Bornhorst/Desktop/ECE544/ProjectGS/repositories/digilentip-library-master"/>
-    <Option Name="IPRepoPath" Val="$PPRDIR/../../../../Ryan Bornhorst/Desktop/ECE544/ProjectGS/repositories/ece544ip-library-master"/>
+    <Option Name="IPRepoPath" Val="$PPRDIR/../ip/digilentip-library-master"/>
+    <Option Name="IPRepoPath" Val="$PPRDIR/../ip/CameraIP_1.0"/>
+    <Option Name="IPRepoPath" Val="$PPRDIR/../ip/ece544ip-library-master"/>
     <Option Name="IPOutputRepo" Val="$PCACHEDIR/ip"/>
     <Option Name="IPCachePermission" Val="read"/>
     <Option Name="IPCachePermission" Val="write"/>

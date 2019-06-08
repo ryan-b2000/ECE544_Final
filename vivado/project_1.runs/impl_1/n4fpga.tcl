@@ -60,18 +60,134 @@ proc step_failed { step } {
   close $ch
 }
 
+set_msg_config -id {Synth 8-256} -limit 10000
+set_msg_config -id {Synth 8-638} -limit 10000
+
+start_step init_design
+set ACTIVE_STEP init_design
+set rc [catch {
+  create_msg_db init_design.pb
+  set_param board.repoPaths C:/Vivado/vivado_board_files/new/board_files
+  set_param synth.incrementalSynthesisCache C:/Users/Ryan/AppData/Roaming/Xilinx/Vivado/.Xil/Vivado-15060-Computer/incrSyn
+  create_project -in_memory -part xc7a100tcsg324-1
+  set_property design_mode GateLvl [current_fileset]
+  set_param project.singleFileAddWarning.threshold 0
+  set_property webtalk.parent_dir C:/Users/Ryan/ECE-544/project_final/vivado/project_1.cache/wt [current_project]
+  set_property parent.project_path C:/Users/Ryan/ECE-544/project_final/vivado/project_1.xpr [current_project]
+  set_property ip_repo_paths {
+  C:/Users/Ryan/ECE-544/project_final/ip_repo/CameraIP_1.0
+  C:/Users/Ryan/ECE-544/project_final/ip_repo/CameraIP_1.0
+  {C:/Users/Ryan Bornhorst/Desktop/ECE544/ProjectGS/repositories/digilentip-library-master}
+  {C:/Users/Ryan Bornhorst/Desktop/ECE544/ProjectGS/repositories/ece544ip-library-master}
+} [current_project]
+  set_property ip_output_repo C:/Users/Ryan/ECE-544/project_final/vivado/project_1.cache/ip [current_project]
+  set_property ip_cache_permissions {read write} [current_project]
+  set_property XPM_LIBRARIES {XPM_CDC XPM_MEMORY} [current_project]
+  add_files -quiet C:/Users/Ryan/ECE-544/project_final/vivado/project_1.runs/synth_1/n4fpga.dcp
+  set_msg_config -source 4 -id {BD 41-1661} -limit 0
+  set_param project.isImplRun true
+  add_files C:/Users/Ryan/ECE-544/project_final/vivado/project_1.srcs/sources_1/bd/embsys/embsys.bd
+  set_param project.isImplRun false
+  read_xdc C:/Users/Ryan/ECE-544/project_final/constraints/n4DDRfpga.xdc
+  set_param project.isImplRun true
+  link_design -top n4fpga -part xc7a100tcsg324-1
+  set_param project.isImplRun false
+  write_hwdef -force -file n4fpga.hwdef
+  close_msg_db -file init_design.pb
+} RESULT]
+if {$rc} {
+  step_failed init_design
+  return -code error $RESULT
+} else {
+  end_step init_design
+  unset ACTIVE_STEP 
+}
+
+start_step opt_design
+set ACTIVE_STEP opt_design
+set rc [catch {
+  create_msg_db opt_design.pb
+  opt_design -directive Explore
+  write_checkpoint -force n4fpga_opt.dcp
+  create_report "impl_1_opt_report_drc_0" "report_drc -file n4fpga_drc_opted.rpt -pb n4fpga_drc_opted.pb -rpx n4fpga_drc_opted.rpx"
+  close_msg_db -file opt_design.pb
+} RESULT]
+if {$rc} {
+  step_failed opt_design
+  return -code error $RESULT
+} else {
+  end_step opt_design
+  unset ACTIVE_STEP 
+}
+
+start_step place_design
+set ACTIVE_STEP place_design
+set rc [catch {
+  create_msg_db place_design.pb
+  if { [llength [get_debug_cores -quiet] ] > 0 }  { 
+    implement_debug_core 
+  } 
+  place_design -directive EarlyBlockPlacement
+  write_checkpoint -force n4fpga_placed.dcp
+  create_report "impl_1_place_report_io_0" "report_io -file n4fpga_io_placed.rpt"
+  create_report "impl_1_place_report_utilization_0" "report_utilization -file n4fpga_utilization_placed.rpt -pb n4fpga_utilization_placed.pb"
+  create_report "impl_1_place_report_control_sets_0" "report_control_sets -verbose -file n4fpga_control_sets_placed.rpt"
+  close_msg_db -file place_design.pb
+} RESULT]
+if {$rc} {
+  step_failed place_design
+  return -code error $RESULT
+} else {
+  end_step place_design
+  unset ACTIVE_STEP 
+}
+
+start_step phys_opt_design
+set ACTIVE_STEP phys_opt_design
+set rc [catch {
+  create_msg_db phys_opt_design.pb
+  phys_opt_design -directive Explore
+  write_checkpoint -force n4fpga_physopt.dcp
+  close_msg_db -file phys_opt_design.pb
+} RESULT]
+if {$rc} {
+  step_failed phys_opt_design
+  return -code error $RESULT
+} else {
+  end_step phys_opt_design
+  unset ACTIVE_STEP 
+}
+
+start_step route_design
+set ACTIVE_STEP route_design
+set rc [catch {
+  create_msg_db route_design.pb
+  route_design -directive Explore
+  write_checkpoint -force n4fpga_routed.dcp
+  create_report "impl_1_route_report_drc_0" "report_drc -file n4fpga_drc_routed.rpt -pb n4fpga_drc_routed.pb -rpx n4fpga_drc_routed.rpx"
+  create_report "impl_1_route_report_methodology_0" "report_methodology -file n4fpga_methodology_drc_routed.rpt -pb n4fpga_methodology_drc_routed.pb -rpx n4fpga_methodology_drc_routed.rpx"
+  create_report "impl_1_route_report_power_0" "report_power -file n4fpga_power_routed.rpt -pb n4fpga_power_summary_routed.pb -rpx n4fpga_power_routed.rpx"
+  create_report "impl_1_route_report_route_status_0" "report_route_status -file n4fpga_route_status.rpt -pb n4fpga_route_status.pb"
+  create_report "impl_1_route_report_timing_summary_0" "report_timing_summary -max_paths 10 -file n4fpga_timing_summary_routed.rpt -pb n4fpga_timing_summary_routed.pb -rpx n4fpga_timing_summary_routed.rpx -warn_on_violation "
+  create_report "impl_1_route_report_incremental_reuse_0" "report_incremental_reuse -file n4fpga_incremental_reuse_routed.rpt"
+  create_report "impl_1_route_report_clock_utilization_0" "report_clock_utilization -file n4fpga_clock_utilization_routed.rpt"
+  create_report "impl_1_route_report_bus_skew_0" "report_bus_skew -warn_on_violation -file n4fpga_bus_skew_routed.rpt -pb n4fpga_bus_skew_routed.pb -rpx n4fpga_bus_skew_routed.rpx"
+  close_msg_db -file route_design.pb
+} RESULT]
+if {$rc} {
+  write_checkpoint -force n4fpga_routed_error.dcp
+  step_failed route_design
+  return -code error $RESULT
+} else {
+  end_step route_design
+  unset ACTIVE_STEP 
+}
 
 start_step write_bitstream
 set ACTIVE_STEP write_bitstream
 set rc [catch {
   create_msg_db write_bitstream.pb
-  set_param board.repoPaths C:XilinxVivadoÅ8.2dataoards
-  open_checkpoint n4fpga_routed.dcp
-  set_property webtalk.parent_dir C:/Users/Public/Vivado/ECE544_PROJv3/project_1/project_1.cache/wt [current_project]
   set_property XPM_LIBRARIES {XPM_CDC XPM_MEMORY} [current_project]
-  add_files c:/Users/Public/Vivado/ECE544_PROJv3/project_1/project_1.srcs/sources_1/bd/embsys/ip/embsys_microblaze_0_0/data/mb_bootloop_le.elf
-  set_property SCOPED_TO_REF embsys [get_files -all c:/Users/Public/Vivado/ECE544_PROJv3/project_1/project_1.srcs/sources_1/bd/embsys/ip/embsys_microblaze_0_0/data/mb_bootloop_le.elf]
-  set_property SCOPED_TO_CELLS microblaze_0 [get_files -all c:/Users/Public/Vivado/ECE544_PROJv3/project_1/project_1.srcs/sources_1/bd/embsys/ip/embsys_microblaze_0_0/data/mb_bootloop_le.elf]
   catch { write_mem_info -force n4fpga.mmi }
   catch { write_bmm -force n4fpga_bd.bmm }
   write_bitstream -force n4fpga.bit 

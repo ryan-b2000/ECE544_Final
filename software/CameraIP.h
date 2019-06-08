@@ -13,6 +13,9 @@
 #define CAMERAIP_S00_AXI_SLV_REG2_OFFSET 8
 #define CAMERAIP_S00_AXI_SLV_REG3_OFFSET 12
 
+#define OV7670_SBBC_ADDR_READ 	(0x42)
+#define OV7670_SBBC_ADDR_WRITE 	(0x43)
+
 
 /**************************** Type Definitions *****************************/
 /**

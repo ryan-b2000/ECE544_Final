@@ -46,7 +46,8 @@ module OV7670_wrapper(
     output [18:0] capture_addr,
     output [11:0] capture_data,
     output capture_we,
-    output taken
+    output taken,
+    input freeze_frame
     );
     
     // signal for showing camera has ran configuration
@@ -77,7 +78,8 @@ module OV7670_wrapper(
         .d(OV7670_DATA),
         .addr(capture_addr),
         .dout(capture_data),
-        .we(capture_we)
+        .we(capture_we),
+        .freeze_frame(freeze_frame)
     );
     
     // OV7670 VGA Controller

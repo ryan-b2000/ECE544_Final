@@ -38,6 +38,7 @@
         output wire [18:0] capture_addr,
         output wire [11:0] capture_data,
         output wire capture_we,
+        input wire freeze_frame,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -448,7 +449,8 @@
         .capture_addr(capture_addr),
         .capture_data(capture_data),
         .capture_we(capture_we),
-        .taken(taken)
+        .taken(taken),
+        .freeze_frame(slv_reg1[16])
     );
 	// User logic ends
 

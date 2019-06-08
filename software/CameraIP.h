@@ -81,4 +81,8 @@ int OV7670_initialize(u32 BaseAddress);
 
 void OV7670_setup(u16 writeData);
 
+void OV7670_freeze();
+
+void OV7670_unfreeze();
+
 #endif // CAMERAIP_H

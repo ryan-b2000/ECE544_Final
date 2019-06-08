@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenRun Id="synth_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1559953906">
   <File Type="PA-TCL" Name="n4fpga.tcl"/>
-  <File Type="RDS-PROPCONSTRS" Name="n4fpga_drc_synth.rpt"/>
   <File Type="REPORTS-TCL" Name="n4fpga_reports.tcl"/>
   <File Type="RDS-RDS" Name="n4fpga.vds"/>
   <File Type="RDS-UTIL" Name="n4fpga_utilization_synth.rpt"/>
   <File Type="RDS-UTIL-PB" Name="n4fpga_utilization_synth.pb"/>
   <File Type="RDS-DCP" Name="n4fpga.dcp"/>
-  <File Type="VDS-TIMINGSUMMARY" Name="n4fpga_timing_summary_synth.rpt"/>
-  <File Type="VDS-TIMING-PB" Name="n4fpga_timing_summary_synth.pb"/>
   <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
     <Filter Type="Srcs"/>
     <File Path="$PSRCDIR/sources_1/bd/embsys/embsys.bd">
@@ -50,13 +47,13 @@
       <Option Id="ReTiming">1</Option>
     </Step>
   </Strategy>
-  <BlockFileSet Type="BlockSrcs" Name="embsys_mdm_1_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="embsys_CameraIP_0_3"/>
-  <BlockFileSet Type="BlockSrcs" Name="embsys_microblaze_0_xlconcat_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_nexys4IO_0_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_fit_timer_0_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="embsys_microblaze_0_axi_intc_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="embsys_CameraIP_0_3"/>
+  <BlockFileSet Type="BlockSrcs" Name="embsys_microblaze_0_xlconcat_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="embsys_mdm_1_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_axi_timer_0_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="embsys_microblaze_0_axi_intc_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_axi_uartlite_0_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_microblaze_0_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_clk_wiz_1_0"/>

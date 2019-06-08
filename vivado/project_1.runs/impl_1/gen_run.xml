@@ -1,69 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenRun Id="impl_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1559953907">
-  <File Type="BITSTR-BMM" Name="n4fpga_bd.bmm"/>
-  <File Type="OPT-METHODOLOGY-DRC" Name="n4fpga_methodology_drc_opted.rpt"/>
-  <File Type="INIT-TIMING" Name="n4fpga_timing_summary_init.rpt"/>
   <File Type="ROUTE-PWR" Name="n4fpga_power_routed.rpt"/>
   <File Type="PA-TCL" Name="n4fpga.tcl"/>
-  <File Type="OPT-TIMING" Name="n4fpga_timing_summary_opted.rpt"/>
-  <File Type="OPT-DCP" Name="n4fpga_opt.dcp"/>
+  <File Type="BITSTR-BMM" Name="n4fpga_bd.bmm"/>
   <File Type="ROUTE-PWR-SUM" Name="n4fpga_power_summary_routed.pb"/>
   <File Type="REPORTS-TCL" Name="n4fpga_reports.tcl"/>
+  <File Type="OPT-DCP" Name="n4fpga_opt.dcp"/>
   <File Type="OPT-DRC" Name="n4fpga_drc_opted.rpt"/>
   <File Type="OPT-HWDEF" Name="n4fpga.hwdef"/>
   <File Type="PWROPT-DCP" Name="n4fpga_pwropt.dcp"/>
-  <File Type="PWROPT-DRC" Name="n4fpga_drc_pwropted.rpt"/>
-  <File Type="PWROPT-TIMING" Name="n4fpga_timing_summary_pwropted.rpt"/>
   <File Type="PLACE-DCP" Name="n4fpga_placed.dcp"/>
   <File Type="PLACE-IO" Name="n4fpga_io_placed.rpt"/>
-  <File Type="PLACE-CLK" Name="n4fpga_clock_utilization_placed.rpt"/>
   <File Type="PLACE-UTIL" Name="n4fpga_utilization_placed.rpt"/>
   <File Type="PLACE-UTIL-PB" Name="n4fpga_utilization_placed.pb"/>
   <File Type="PLACE-CTRL" Name="n4fpga_control_sets_placed.rpt"/>
-  <File Type="PLACE-SIMILARITY" Name="n4fpga_incremental_reuse_placed.rpt"/>
   <File Type="PLACE-PRE-SIMILARITY" Name="n4fpga_incremental_reuse_pre_placed.rpt"/>
   <File Type="BG-BGN" Name="n4fpga.bgn"/>
-  <File Type="PLACE-TIMING" Name="n4fpga_timing_summary_placed.rpt"/>
   <File Type="POSTPLACE-PWROPT-DCP" Name="n4fpga_postplace_pwropt.dcp"/>
   <File Type="BG-BIN" Name="n4fpga.bin"/>
-  <File Type="POSTPLACE-PWROPT-TIMING" Name="n4fpga_timing_summary_postplace_pwropted.rpt"/>
   <File Type="PHYSOPT-DCP" Name="n4fpga_physopt.dcp"/>
-  <File Type="PHYSOPT-DRC" Name="n4fpga_drc_physopted.rpt"/>
   <File Type="BITSTR-MSK" Name="n4fpga.msk"/>
-  <File Type="PHYSOPT-TIMING" Name="n4fpga_timing_summary_physopted.rpt"/>
   <File Type="ROUTE-ERROR-DCP" Name="n4fpga_routed_error.dcp"/>
   <File Type="ROUTE-DCP" Name="n4fpga_routed.dcp"/>
   <File Type="ROUTE-BLACKBOX-DCP" Name="n4fpga_routed_bb.dcp"/>
   <File Type="ROUTE-DRC" Name="n4fpga_drc_routed.rpt"/>
   <File Type="ROUTE-DRC-PB" Name="n4fpga_drc_routed.pb"/>
-  <File Type="BITSTR-LTX" Name="debug_nets.ltx"/>
-  <File Type="BITSTR-LTX" Name="n4fpga.ltx"/>
   <File Type="ROUTE-DRC-RPX" Name="n4fpga_drc_routed.rpx"/>
-  <File Type="BITSTR-MMI" Name="n4fpga.mmi"/>
+  <File Type="BITSTR-LTX" Name="n4fpga.ltx"/>
   <File Type="ROUTE-METHODOLOGY-DRC" Name="n4fpga_methodology_drc_routed.rpt"/>
+  <File Type="BITSTR-MMI" Name="n4fpga.mmi"/>
   <File Type="ROUTE-METHODOLOGY-DRC-RPX" Name="n4fpga_methodology_drc_routed.rpx"/>
-  <File Type="BITSTR-SYSDEF" Name="n4fpga.sysdef"/>
   <File Type="ROUTE-METHODOLOGY-DRC-PB" Name="n4fpga_methodology_drc_routed.pb"/>
+  <File Type="BITSTR-SYSDEF" Name="n4fpga.sysdef"/>
   <File Type="ROUTE-PWR-RPX" Name="n4fpga_power_routed.rpx"/>
   <File Type="ROUTE-STATUS" Name="n4fpga_route_status.rpt"/>
   <File Type="ROUTE-STATUS-PB" Name="n4fpga_route_status.pb"/>
   <File Type="ROUTE-TIMINGSUMMARY" Name="n4fpga_timing_summary_routed.rpt"/>
   <File Type="ROUTE-TIMING-PB" Name="n4fpga_timing_summary_routed.pb"/>
   <File Type="ROUTE-TIMING-RPX" Name="n4fpga_timing_summary_routed.rpx"/>
-  <File Type="ROUTE-SIMILARITY" Name="n4fpga_incremental_reuse_routed.rpt"/>
   <File Type="ROUTE-CLK" Name="n4fpga_clock_utilization_routed.rpt"/>
   <File Type="ROUTE-BUS-SKEW" Name="n4fpga_bus_skew_routed.rpt"/>
   <File Type="ROUTE-BUS-SKEW-PB" Name="n4fpga_bus_skew_routed.pb"/>
   <File Type="ROUTE-BUS-SKEW-RPX" Name="n4fpga_bus_skew_routed.rpx"/>
   <File Type="POSTROUTE-PHYSOPT-DCP" Name="n4fpga_postroute_physopt.dcp"/>
   <File Type="POSTROUTE-PHYSOPT-BLACKBOX-DCP" Name="n4fpga_postroute_physopt_bb.dcp"/>
-  <File Type="POSTROUTE-PHYSOPT-TIMING" Name="n4fpga_timing_summary_postroute_physopted.rpt"/>
-  <File Type="POSTROUTE-PHYSOPT-TIMING-PB" Name="n4fpga_timing_summary_postroute_physopted.pb"/>
-  <File Type="POSTROUTE-PHYSOPT-TIMING-RPX" Name="n4fpga_timing_summary_postroute_physopted.rpx"/>
-  <File Type="POSTROUTE-PHYSOPT-BUS-SKEW" Name="n4fpga_bus_skew_postroute_physopted.rpt"/>
-  <File Type="POSTROUTE-PHYSOPT-BUS-SKEW-PB" Name="n4fpga_bus_skew_postroute_physopted.pb"/>
   <File Type="BG-BIT" Name="n4fpga.bit"/>
-  <File Type="POSTROUTE-PHYSOPT-BUS-SKEW-RPX" Name="n4fpga_bus_skew_postroute_physopted.rpx"/>
   <File Type="BITSTR-RBT" Name="n4fpga.rbt"/>
   <File Type="BITSTR-NKY" Name="n4fpga.nky"/>
   <File Type="BG-DRC" Name="n4fpga.drc"/>
@@ -123,13 +104,13 @@
     <Step Id="post_route_phys_opt_design"/>
     <Step Id="write_bitstream"/>
   </Strategy>
-  <BlockFileSet Type="BlockSrcs" Name="embsys_mdm_1_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="embsys_CameraIP_0_3"/>
-  <BlockFileSet Type="BlockSrcs" Name="embsys_microblaze_0_xlconcat_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_nexys4IO_0_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_fit_timer_0_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="embsys_microblaze_0_axi_intc_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="embsys_CameraIP_0_3"/>
+  <BlockFileSet Type="BlockSrcs" Name="embsys_microblaze_0_xlconcat_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="embsys_mdm_1_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_axi_timer_0_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="embsys_microblaze_0_axi_intc_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_axi_uartlite_0_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_microblaze_0_0"/>
   <BlockFileSet Type="BlockSrcs" Name="embsys_clk_wiz_1_0"/>

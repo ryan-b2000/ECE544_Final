@@ -141,10 +141,8 @@
     </FileSet>
     <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
       <Filter Type="Constrs"/>
-      <File Path="$PSRCDIR/constrs_1/imports/constraints/n4DDRfpga.xdc">
+      <File Path="$PPRDIR/../constraints/n4DDRfpga.xdc">
         <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../../Ryan Bornhorst/Desktop/ECE544/ProjectGS/constraints/n4DDRfpga.xdc"/>
-          <Attr Name="ImportTime" Val="1554676306"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
         </FileInfo>

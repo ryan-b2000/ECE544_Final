@@ -35,6 +35,8 @@ int main(void)
     u8 camera_position;		// tracks position of the camera
     u8 camera_status;		// tracks if we are transferring an image or not
 
+    u32 frame_address;
+
     // Initialize the system
 	init_platform();
 	if (do_init() != XST_SUCCESS)
@@ -48,19 +50,23 @@ int main(void)
 	// Initialize variables
 	camera_position = 0;
 	camera_status = IMAGE_TRANSFER_IDLE;
+	frame_address = 0;
 
 	while(1) {
 
-		// HANDLE UPDATE FROM NODEMCU (Change position / take picture)
+		// Handle any updates from the NodeMCU that the app made a change
 
-		// HANDLE IMAGE TRANSFER PROCESS
+		
+
+		// Handle the image transfer process
 		if (camera_status == IMAGE_TRANSFER_PROG) {
 
 			// check if NodeMCU is ready for next data burst
 			if (check_cts_pin() == OK_TO_SEND) {
 
 				// collect pixel data from camera
-
+				frame_address = pixel_collector(pxl_words_buff, address);
+				
 				// encode pixel data into byte64
 				base64_encoder(pxl_words_buff, SIZE_PIXEL_BUFF, pxl_bytes_buff, SIZE_BYTES_BUFF);
 

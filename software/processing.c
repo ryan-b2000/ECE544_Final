@@ -6,6 +6,31 @@
 static char b64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 
+
+u32 pixel_collector(uint16_t buff, u32 address) {
+    
+    u8 buff_limit;
+
+    // check if reading a full buffer will overflow the address
+    if ((address + 16) < FRAME_MAX_ADDRESS) {
+        buff_limit = SIZE_PIXEL_BUFF;
+    }
+    else {
+        buff_limit = FRAME_MAX_ADDRESS - address;
+    }
+
+    // collect the pixel words from the camera
+    for(int i = 0; i < buff_limit; i++) {
+        OV7670_setPixelWord(address);
+        OV7670_getPixelWord();
+        address++;
+    }
+
+    // return the updated address
+    return address;
+}
+
+
 void base64_encoder (uint16_t * in, uint8_t sizein, uint8_t * out, uint8_t sizeout) {
 
     uint8_t i, index;

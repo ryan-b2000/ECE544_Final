@@ -41,14 +41,12 @@ void OV7670_unfreeze()
 }
 
 
-void OV7670_setFrame(u32 wr_data)
+void OV7670_setPixelWord(u32 address)
 {
 	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG2_OFFSET, wr_data);
 }
 
-void OV7670_getFrame()
+u32 OV7670_getPixelWord()
 {
-	u32 data;
-	data = CAMERAIP_mReadReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG3_OFFSET);
-	xil_printf ("data -> %08x\n", data);
+	return CAMERAIP_mReadReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG3_OFFSET);
 }

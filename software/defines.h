@@ -49,6 +49,7 @@
 #define IMAGE_TRANSFER_IDLE 0	// not doing an image transfer
 #define IMAGE_TRANSFER_PROG 1	// in the middle of doing an image transfer
 
+#define FRAME_MAX_ADDRESS 19200
 #define SIZE_PIXEL_BUFF (38)						// number of pixel words in the buffer
 #define SIZE_BYTES_BUFF	(2* SIZE_PIXEL_BUFF + 1)	// number of pixel bytes in the buffer
 

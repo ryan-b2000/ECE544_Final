@@ -79,6 +79,47 @@ int main(void)
 
 
 
+/**
+ * @brief Check the buttons and return command for button press
+ * @details Analyze the buttons for if we want to take a picture or not
+ * @return command for the button presses
+ */
+u8 check_buttons() {
+	u8 command;
+	u32 btnU = 0;
+	u32 btnC = 0;
+	u32 btnD = 0;
+	u32 btnU_last = 0;
+	u32 btnC_last = 0;
+	u32 btnD_last = 0;
+
+	btnC = NX4IO_isPressed(BTNC);
+	if (btnC && !btnC_last)
+	{
+		command = CAMERA_UNFREEZE;
+		//OV7670_freeze();
+	}
+
+	btnU = NX4IO_isPressed(BTNU);
+	if (btnU && !btnU_last)
+	{
+		command = CAMERA_FREEZE;
+		//OV7670_unfreeze();
+	}
+
+	btnD = NX4IO_isPressed(BTND);
+	if (btnD && !btnD_last)
+	{
+		command = CAMERA_PICTURE;
+	}
+
+	btnC_last = btnC;
+	btnU_last = btnU;
+	btnD_last = btnD;
+
+	return command;
+}
+
 
 /**
  * @brief 	Crude sleep function to put small delays into the code.

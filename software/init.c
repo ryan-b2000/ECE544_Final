@@ -3,21 +3,8 @@
 #include "init.h"
 
 
-/**
- * 		Initialization functions for the embedded system.
- */
 
-
-
-/****************************************************************************/
-/**
-* initialize the system
-*
-* This function is executed once at start-up and after resets.  It initializes
-* the peripherals and registers the interrupt handler(s)
-*****************************************************************************/
-
-int	 do_init(void)
+int do_init(void)
 {
 	uint32_t status;				// status from Xilinx Lib calls
 
@@ -104,3 +91,91 @@ int AXI_Timer_initialize(void){
 	return XST_SUCCESS;
 
 }
+
+
+void init_camera() {
+
+	OV7670_setup(0x1280);
+	OV7670_setup(0x1280);
+	OV7670_setup(0x1204);
+	OV7670_setup(0x1100);
+	OV7670_setup(0x0c00);
+	OV7670_setup(0x3e00);
+	OV7670_setup(0x8c00);
+	OV7670_setup(0x0400);
+	OV7670_setup(0x40d0);
+	OV7670_setup(0x3a04);
+	OV7670_setup(0x1418);
+	OV7670_setup(0x4f40);
+	OV7670_setup(0x5034);
+	OV7670_setup(0x510c);
+	OV7670_setup(0x5217);
+	OV7670_setup(0x5329);
+	OV7670_setup(0x5440);
+	OV7670_setup(0x581e);
+	OV7670_setup(0x3dc0);
+	OV7670_setup(0x1100);
+	OV7670_setup(0x1711);
+	OV7670_setup(0x1861);
+	OV7670_setup(0x32a4);
+	OV7670_setup(0x1903);
+	OV7670_setup(0x1a7b);
+	OV7670_setup(0x030a);
+	OV7670_setup(0x030a);
+	OV7670_setup(0x1e00);
+	OV7670_setup(0x330b);
+	OV7670_setup(0x3c78);
+	OV7670_setup(0x6900);
+	OV7670_setup(0x7400);
+	OV7670_setup(0xb084);
+	OV7670_setup(0xb10c);
+	OV7670_setup(0xb20e);
+	OV7670_setup(0xb380);
+
+	OV7670_setup(0x703a);
+	OV7670_setup(0x7135);
+	OV7670_setup(0x7211);
+	OV7670_setup(0x73f0);
+	OV7670_setup(0xa202);
+
+	OV7670_setup(0x7a20);
+	OV7670_setup(0x7b10);
+	OV7670_setup(0x7c1e);
+	OV7670_setup(0x7d35);
+	OV7670_setup(0x7e5a);
+	OV7670_setup(0x7f69);
+	OV7670_setup(0x8076);
+	OV7670_setup(0x8180);
+	OV7670_setup(0x8288);
+	OV7670_setup(0x838f);
+	OV7670_setup(0x8496);
+	OV7670_setup(0x85a3);
+	OV7670_setup(0x86af);
+	OV7670_setup(0x87c4);
+	OV7670_setup(0x88d7);
+	OV7670_setup(0x89e8);
+
+	OV7670_setup(0x13e0);
+	OV7670_setup(0x0000);
+	OV7670_setup(0x1000);
+	OV7670_setup(0x0d40);
+	OV7670_setup(0x1418);
+	OV7670_setup(0xa505);
+	OV7670_setup(0xab07);
+	OV7670_setup(0x2495);
+	OV7670_setup(0x2533);
+	OV7670_setup(0x26e3);
+	OV7670_setup(0x9f78);
+	OV7670_setup(0xa068);
+	OV7670_setup(0xa103);
+	OV7670_setup(0xa6d8);
+	OV7670_setup(0xa7d8);
+	OV7670_setup(0xa8f0);
+	OV7670_setup(0xa990);
+	OV7670_setup(0xaa94);
+	OV7670_setup(0x13e5);
+	OV7670_setup(0x13e5);
+	OV7670_setup(0x13e5);
+	OV7670_setup(0xffff);
+}
+

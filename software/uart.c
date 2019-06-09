@@ -32,19 +32,61 @@ void uart_init(u16 DeviceId) {
 		return;
 	}
 
-	xil_printf("Uart initialized successfully.\n");
+	xil_printf("UART initialized successfully.\n");
 	return;
 }
 
+/**
+ * @brief Transmit a data buffer via the UART
+ * @details We are going to send 76 bytes out of the UART. This function blocks until
+ * 			the UART has finished sending all the bytes out.
+ * 			
+ * @param data the data buffer to send
+ * @param numbytes number of bytes to send
+ */
 void uart_transmit(u8 * data, u8 numbytes) {
 
+	u8 i, index, blocks, remain;
 	u32 sentcount;
-	/*
-	 * Send the buffer through the UartLite waiting til the data can be sent
-	 * (block), if the specified number of bytes was not sent successfully,
-	 * then an error occurred.
-	 */
-	sentcount = XUartLite_Send(&UartLite, data, numbytes);
+	u8 * buff;		// temporary buffer pointer to pass to UART
+
+
+	index = 0;	 // set master index that iterates through entire data buffer
+
+	// we should be sending about 76 bytes per transmission. UART buffer can take 16 at a time
+	// so figure out how many 16-byte blocks we can send
+	blocks = numbytes / 16;
+	remain = numbytes - blocks;
+
+	// send the 16-byte blocks
+	for (i = 0; i < blocks; ++i) {
+		buff = (data + index);
+		// send the bytes
+		sentcount = XUartLite_Send(&UartLite, buff, numbytes);
+		if (sentcount != numbytes) {
+			xil_printf("Transmit failure. %d bytes not sent.\n", numbytes - sentcount);
+		return;
+		}
+		// incremenent master index 
+		++index;
+	}
+
+	// send the remainder bytes
+	if (remain > 0) {
+		buff = (data + index);
+		sentcount = XUartLite_Send(&UartLite, buff, remain);
+		if (sentcount != numbytes) {
+			xil_printf("Transmit failure. %d bytes not sent.\n", numbytes - sentcount);
+		return;
+		}
+		++index;
+	}
+
+
+	// Pass data to UART buffer (function blocks if FIFO is full)
+	// Check that the bytes sent match how much we wanted to
+	buff = (data + index);
+	sentcount = XUartLite_Send(&UartLite, buff, numbytes);
 	if (sentcount != numbytes) {
 		xil_printf("Transmit failure. %d bytes not sent.\n", numbytes - sentcount);
 		return;

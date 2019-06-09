@@ -45,6 +45,13 @@
 #define UART1_DEVICE_ID			XPAR_UARTLITE_1_DEVICE_ID
 #define UART1_BASEADDR			XPAR_UARTLITE_1_BASEADDR
 
+// Camera status defines
+#define IMAGE_TRANSFER_IDLE 0	// not doing an image transfer
+#define IMAGE_TRANSFER_PROG 1	// in the middle of doing an image transfer
+
+#define SIZE_PIXEL_BUFF (38)						// number of pixel words in the buffer
+#define SIZE_BYTES_BUFF	(2* SIZE_PIXEL_BUFF + 1)	// number of pixel bytes in the buffer
+
 
 /************************** Variable Definitions ****************************/
 // Microblaze peripheral instances

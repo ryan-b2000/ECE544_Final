@@ -40,14 +40,16 @@ module OV7670_wrapper(
     output [3:0] vga_blue,
     output vga_hsync,
     output vga_vsync,
-    output led,
+    output [15:0] led,
     input [11:0] frame_pixel,
     output [18:0] frame_addr,
     output [18:0] capture_addr,
     output [11:0] capture_data,
     output capture_we,
     output taken,
-    input freeze_frame
+    input freeze_frame,
+    input [18:0] axi_address,
+    output [11:0] axi_pixel
     );
     
     // signal for showing camera has ran configuration
@@ -82,17 +84,58 @@ module OV7670_wrapper(
         .freeze_frame(freeze_frame)
     );
     
+    wire [18:0] frame_addr_w;
+    wire [11:0] frame_pixel_w;
+    assign axi_pixel = frame_pixel;
+    assign frame_addr = (freeze_frame) ? axi_address : frame_addr_w;
+    assign frame_pixel_w = (freeze_frame) ? 'bz : frame_pixel;
+    
+    wire nBlank;
+    wire nSync;
+    wire activeArea;
+    wire vSync;
+    
+    assign vga_vsync = vSync;
+    
     // OV7670 VGA Controller
     vga vga (
         .clk25(clk25),
         .reset_n(sysreset_n),
+        /*
         .vga_red(vga_red),
         .vga_green(vga_green),
         .vga_blue(vga_blue),
+        */
         .vga_hsync(vga_hsync),
-        .vga_vsync(vga_vsync),
-        .frame_addr(frame_addr),
-        .frame_pixel(frame_pixel)
+        .vga_vsync(vSync),
+        .nBlank(nBlank),
+        .activeArea(activeArea),
+        .nSync(nSync)
+        /*
+        .frame_addr(frame_addr_w),
+        .frame_pixel(frame_pixel_w)
+        */
+    );
+    
+    address_valid address_valid (
+        .clk25(clk25),
+        .reset_n(sysreset_n),
+        .enable(activeArea),
+        .vsync(vSync),
+        .address(frame_addr_w)
+    );
+    
+    wire [7:0] red, green, blue;
+    assign vga_red = red[7:4];
+    assign vga_green = green[7:4];
+    assign vga_blue = blue[7:4];
+    
+    rgb_valid rgb_valid (
+        .data(frame_pixel_w),
+        .nBlank(activeArea),
+        .vga_red(red),
+        .vga_green(green),
+        .vga_blue(blue)
     );
     
 endmodule

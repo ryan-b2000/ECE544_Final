@@ -45,7 +45,7 @@
 #define FIT_INTERRUPT_ID		XPAR_MICROBLAZE_0_AXI_INTC_FIT_TIMER_0_INTERRUPT_INTR
 
 
-#define MAX_ADDRESS 307200
+#define MAX_ADDRESS 19200
 
 /**************************** Type Definitions ******************************/
 
@@ -118,7 +118,7 @@ int main(void)
 		{
 			u32 address = 0;
 
-			for(int i = 0; i < 100; i++)
+			for(int i = 0; i < MAX_ADDRESS; i++)
 			{
 				OV7670_setFrame(address);
 				OV7670_getFrame();

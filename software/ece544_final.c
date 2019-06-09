@@ -44,6 +44,9 @@
 #define INTC_DEVICE_ID			XPAR_INTC_0_DEVICE_ID
 #define FIT_INTERRUPT_ID		XPAR_MICROBLAZE_0_AXI_INTC_FIT_TIMER_0_INTERRUPT_INTR
 
+
+#define MAX_ADDRESS 307200
+
 /**************************** Type Definitions ******************************/
 
 /***************** Macros (Inline Functions) Definitions ********************/
@@ -69,7 +72,7 @@ int	 do_init(void);											// initialize system
 void FIT_Handler(void);										// fixed interval timer interrupt handler
 int AXI_Timer_initialize(void);
 
-void RunTest1(void);
+void OV7670_init(void);
 
 /************************** MAIN PROGRAM ************************************/
 int main(void)
@@ -86,26 +89,51 @@ int main(void)
 
 	microblaze_enable_interrupts();
 
-	// Run an iteration of the test
-	RunTest1();
-	
+	// Initialize Camera
+	OV7670_init();
+
 	while (1)
 	{
+		u32 btnU = 0;
+		u32 btnC = 0;
+		u32 btnD = 0;
+		u32 btnU_last = 0;
+		u32 btnC_last = 0;
+		u32 btnD_last = 0;
 
-		// check whether the center button is pressed.  If it is then
-		// exit the loop.
-		if (NX4IO_isPressed(BTNC))
+		btnC = NX4IO_isPressed(BTNC);
+		if (btnC && !btnC_last)
 		{
-			break;
+			OV7670_freeze();
 		}
-		else
+
+		btnU = NX4IO_isPressed(BTNU);
+		if (btnU && !btnU_last)
 		{
-			// increment the timestamp and delay 100 msecs
-			usleep(100 * 1000);
+			OV7670_unfreeze();
 		}
+
+		btnD = NX4IO_isPressed(BTND);
+		if (btnD && !btnD_last)
+		{
+			u32 address = 0;
+
+			for(int i = 0; i < 100; i++)
+			{
+				OV7670_setFrame(address);
+				OV7670_getFrame();
+				address += 1;
+			}
+			xil_printf("button down\n");
+		}
+
+		btnC_last = btnC;
+		btnU_last = btnU;
+		btnD_last = btnD;
+
+		usleep(5000 * 1000);
+
 	}
-
-	//NX4IO_setLEDs(0x0000);
 
 	usleep(5000 * 1000);
 	
@@ -114,33 +142,23 @@ int main(void)
     exit(0);
 }
 
-/************************ TEST FUNCTIONS ************************************/
-
 /****************************************************************************/
 /**
-* Test 1 - Test the LEDS (LD15..LD0)
-*
-* Checks the functionality of the LEDs API with some constant patterns and
-* a sliding patter.  Determine Pass/Fail by observing the LEDs on the Nexys4
-*
-* @param	*NONE*
-*
-* @return	*NONE*
-*
+Setup the OV7670 camera by initializing the registers
 *****************************************************************************/
-void RunTest1(void)
+void OV7670_init(void)
 {
 	OV7670_setup(0x1280);
 	OV7670_setup(0x1280);
 	OV7670_setup(0x1204);
+	OV7670_setup(0x0c00); // test 0c08
 	OV7670_setup(0x1100);
-	OV7670_setup(0x0c00);
 	OV7670_setup(0x3e00);
 	OV7670_setup(0x8c00);
 	OV7670_setup(0x0400);
-	OV7670_setup(0x40d0);
+	OV7670_setup(0x40d0); // 40d0 or 10
 	OV7670_setup(0x3a04);
-	OV7670_setup(0x1418);
+	OV7670_setup(0x1418); // 1418 or 38
 	OV7670_setup(0x4f40);
 	OV7670_setup(0x5034);
 	OV7670_setup(0x510c);
@@ -156,16 +174,16 @@ void RunTest1(void)
 	OV7670_setup(0x1903);
 	OV7670_setup(0x1a7b);
 	OV7670_setup(0x030a);
-	OV7670_setup(0x030a);
+
 	OV7670_setup(0x1e00);
 	OV7670_setup(0x330b);
 	OV7670_setup(0x3c78);
 	OV7670_setup(0x6900);
-	OV7670_setup(0x7400);
+	OV7670_setup(0x7410);
 	OV7670_setup(0xb084);
 	OV7670_setup(0xb10c);
 	OV7670_setup(0xb20e);
-	OV7670_setup(0xb380);
+	OV7670_setup(0xb382);
 
 	OV7670_setup(0x703a);
 	OV7670_setup(0x7135);
@@ -212,6 +230,7 @@ void RunTest1(void)
 	OV7670_setup(0x13e5);
 	OV7670_setup(0x13e5);
 	OV7670_setup(0xffff);
+
 }
 
 /**************************** HELPER FUNCTIONS ******************************/

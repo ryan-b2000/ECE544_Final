@@ -85,4 +85,8 @@ void OV7670_freeze();
 
 void OV7670_unfreeze();
 
+void OV7670_setFrame(u32 wr_data);
+
+void OV7670_getFrame();
+
 #endif // CAMERAIP_H

@@ -32,7 +32,7 @@
         output wire [3:0] vga_blue,
         output wire vga_hsync,
         output wire vga_vsync,
-        output wire led,
+        output wire [15:0] led,
         input wire [11:0] frame_pixel,
         output wire [18:0] frame_addr,
         output wire [18:0] capture_addr,

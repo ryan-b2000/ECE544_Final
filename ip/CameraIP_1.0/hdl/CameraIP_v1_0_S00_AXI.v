@@ -32,13 +32,14 @@
         output wire [3:0] vga_blue,
         output wire vga_hsync,
         output wire vga_vsync,
-        output wire led,
+        output wire [15:0] led,
         input wire [11:0] frame_pixel,
         output wire [18:0] frame_addr,
         output wire [18:0] capture_addr,
         output wire [11:0] capture_data,
         output wire capture_we,
         input wire freeze_frame,
+        input wire [18:0] axi_address,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -138,6 +139,7 @@
 	reg	 aw_en;
 	
 	wire taken;
+	wire [11:0] axi_pixel;
 
 	// I/O Connections assignments
 
@@ -395,10 +397,10 @@
 	begin
 	      // Address decoding for reading registers
 	      case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
-	        2'h0   : reg_data_out <= taken;        // i2c is ready when this is high
+	        2'h0   : reg_data_out <= taken;        // i2c is ready when taken high
 	        2'h1   : reg_data_out <= slv_reg1;
 	        2'h2   : reg_data_out <= slv_reg2;
-	        2'h3   : reg_data_out <= slv_reg3;
+	        2'h3   : reg_data_out <= axi_pixel;
 	        default : reg_data_out <= 0;
 	      endcase
 	end
@@ -450,7 +452,9 @@
         .capture_data(capture_data),
         .capture_we(capture_we),
         .taken(taken),
-        .freeze_frame(slv_reg1[16])
+        .freeze_frame(slv_reg1[16]),
+        .axi_address(slv_reg2[18:0]),
+        .axi_pixel(axi_pixel)
     );
 	// User logic ends
 

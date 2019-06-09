@@ -18,7 +18,7 @@ public class FirebaseDataImage {
     @Exclude
     public Map<String, Object> toMap() {    // Creates appropriate object for updating Firebase.
         HashMap<String, Object> result = new HashMap<>();
-        result.put("tx_rx", tx_rx);
+        result.put("TX-RX", tx_rx);
         result.put("rt_image",rt_image);
 
         return result;

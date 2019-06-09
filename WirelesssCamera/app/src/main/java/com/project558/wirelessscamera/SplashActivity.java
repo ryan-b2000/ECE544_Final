@@ -75,8 +75,6 @@ public class SplashActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            // TODO: Write code to get images from Firebase on launch.
-
             Integer mNumImages =1;
             mUris = new ArrayList<>();
 
@@ -99,6 +97,11 @@ public class SplashActivity extends AppCompatActivity {
                 });
 
                 mNumImages += 1;
+                try {
+                    Thread.sleep(500);
+                }catch (InterruptedException e) {
+
+                }
             }
             return null;
         }

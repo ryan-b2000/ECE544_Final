@@ -84,6 +84,10 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
 
     public ArrayList<Uri> mUris;
 
+    public Handler mHandler;
+
+    private String mImageString = "";
+
 
     ViewPageFragmentAdapter mAdapterPager;      // Fragment manager class declaration.
 
@@ -176,10 +180,32 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
         // Listener for updating firebase data.
         mDatabaseReference.addValueEventListener(
                 new ValueEventListener() {
+                    String mLastStr = "";
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mFirebaseDataImage = dataSnapshot.getValue(FirebaseDataImage.class);    // Get an image.
+                        mFirebaseDataImage = dataSnapshot.getValue(FirebaseDataImage.class);    // Get image string.
                         // Create runnable for converting image.
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                String mCurrentStr = mFirebaseDataImage.rt_image;   // Get current string and save.
+
+                                if(mCurrentStr != mLastStr) {
+                                    mImageString += mCurrentStr;
+                                    mNumStringsProcessed += 1;
+                                }
+
+                                mLastStr = mCurrentStr;
+
+                                if(mNumStringsProcessed == 50) {
+
+                                }
+
+                            }
+
+
+                        });
+
                     }
 
                     @Override
@@ -193,10 +219,11 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
 
         mStorageReference = mFirebaseStorage.getReference();
 
+        mHandler = new Handler();
+
 
     }
 
-/*
     class LooperThread extends Thread {
         public Handler mHandler;
 
@@ -204,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
             Looper.prepare();
 
             mHandler = new Handler() {
+                @Override
                 public void handleMessage(Message msg) {
                     // process incoming messages.
                 }
@@ -211,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
 
             Looper.loop();
         }
-    } */
+    }
 
     /**
      * Pager adapter for instantiating and passing data to fragments.

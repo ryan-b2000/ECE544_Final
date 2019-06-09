@@ -12,31 +12,31 @@
 package com.project558.wirelessscamera;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-import static java.lang.Thread.sleep;
-
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 /**
  * Activity for displaying splash screen.
  *
  */
 public class SplashActivity extends AppCompatActivity {
+    private static final String EXTRA_URI_LIST = "uri_list";
     private static final String TAG = "Splash";
 
-    private static final int STARTUP_DELAY = 50;
-    private static final int ANIM_ITEM_DURATION = 1000;
-
-    private FirebaseDataImage mFirebaseDataImage;           // Has information given from database.
+    private StorageReference mStorageReference;     // Declaration of object.
+    private FirebaseStorage mFirebaseStorage;
 
     /**
      *  Method to initialize instance variables of class.
@@ -49,21 +49,9 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference(); // Initialize database.
+        mFirebaseStorage = FirebaseStorage.getInstance();       // Initialize storage references.
 
-        mDatabaseReference.addListenerForSingleValueEvent(  // Grabs data instance once.
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mFirebaseDataImage = dataSnapshot.getValue(FirebaseDataImage.class);    // Store database members to class.
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                }
-        );
+        mStorageReference = mFirebaseStorage.getReference();
 
         AsyncTask mAsyncLoad = new GetAppResources().execute(); // Start Async load task.
     }
@@ -74,6 +62,9 @@ public class SplashActivity extends AppCompatActivity {
      * Passes results to the MainActivity.
      */
     private class GetAppResources extends AsyncTask<Void, Void, Void> {
+
+        private ArrayList<Uri> mUris;
+
         /** Method
          *  Description:
          *      Main processing loop for thread class. Converts resources to image.
@@ -84,16 +75,34 @@ public class SplashActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            // TODO: Write code to convert strings to an image.
+            // TODO: Write code to get images from Firebase on launch.
 
-            try {
-                sleep(1000);    // Temporary sleep.
-            } catch (InterruptedException e) {
+            Integer mNumImages =1;
+            mUris = new ArrayList<>();
 
+            while(mNumImages < 15)
+            {
+                String pos = Integer.toString(mNumImages);
+                String toFetch = "img"+ pos + ".png";
+                mStorageReference.child(toFetch).getDownloadUrl().addOnSuccessListener(
+                        new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                // Add to string here:
+                                mUris.add(uri);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+
+                mNumImages += 1;
             }
-            // Convert the image here.
             return null;
         }
+
 
         /** Method
          *  Description:
@@ -108,6 +117,12 @@ public class SplashActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             Intent intentObj = new Intent(SplashActivity.this,MainActivity.class);  // Intent is to create activity.
             // TODO: Add extras with data needed for MainActivity.
+            ArrayList<String> mTemp = new ArrayList<>();
+            for(Integer i = 0; i < mUris.size(); ++i) {
+                mTemp.add(mUris.get(i).toString());
+            }
+            intentObj.putStringArrayListExtra(MainActivity.EXTRA_URI_LIST,mTemp);
+
             startActivity(intentObj);   // Start MainActivity.
             finish();
         }

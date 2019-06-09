@@ -24,6 +24,12 @@
 
 package com.project558.wirelessscamera;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -34,6 +40,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.lang.reflect.Array;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,16 +64,29 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity implements PhotoGalleryFragment.onDeleteAdapterCallback{
 
+    public static final String EXTRA_URI_LIST = "uri_list";
     private static final String TAG = "MainActivity";
     private static final String ADAPTER_IMG_MSG = "image";          // key associated with position value. Packed with bundle when creating fragment
     private static final String ADAPTER_POS_MSG   = "position";     // Key associated with the position of fragment in viewpager.
     private ViewPager mViewPager;                                   // Declaration of ViewPager object.
+    private FirebaseDataImage mFirebaseDataImage;                   // Contains key value pairs with data from database.
+    private DatabaseReference mDatabaseReference;                   // Object for getting database instance members.
 
+    private Integer mNumStringsProcessed = 0;                       // Has count for number of strings processed from database.
+    private String mEncodedStringToConvert;                         // String that holds an encoded image.
 
     public static ArrayList<Integer> IMGS = new ArrayList<>();      // Holds array of images that PhotoGalleryFragment receives.
 
+    private StorageReference mStorageReference;     // Declaration of object.
+    private FirebaseStorage mFirebaseStorage;
+
+    public ArrayList<Integer> mValidIndeces;
+
+    public ArrayList<Uri> mUris;
+
 
     ViewPageFragmentAdapter mAdapterPager;      // Fragment manager class declaration.
+
 
     /**
      *  Method overridden in PhotoGalleryFragment.java - this is the interface function for the class.
@@ -66,27 +96,32 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
     @Override
     public void onDeleteClick(Integer position){
 
-        // For deleting a fragment, I was confused on how to get handle of the fragment I need to delete.
-        // There is a solid solution in this post:  https://stackoverflow.com/questions/9294603/how-do-i-get-the-currently-displayed-fragment
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();  // Getting all current fragment instances.
-        if(fragments != null){
-            for(Fragment fragment: fragments) {                 // Iterate through list of fragments.
-                if(fragment != null && fragment.isVisible())    // Checking which fragment is currently visible.
-                {
-                    FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();  // Start a transaction for removing the current fragment.
-                    mTransaction.remove(fragment);
-                    mTransaction.commit();
-                    // Remove index from image database. Reupdate the app.
+        mUris.remove(position -1);
 
-                    IMGS.remove(position-1);            // Remove image at specified position from array, not needed.
+        StorageReference mToDelete = mStorageReference.child("img"+ Integer.toString(position)+".png");
+        mToDelete.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
 
-                    mAdapterPager.notifyDataSetChanged();     // Notify adapter that it needs to update the ViewPager. (IMG data change)
-
-                    return;
-
+                // For deleting a fragment, I was confused on how to get handle of the fragment I need to delete.
+                // There is a solid solution in this post:  https://stackoverflow.com/questions/9294603/how-do-i-get-the-currently-displayed-fragment
+                List<Fragment> fragments = getSupportFragmentManager().getFragments();  // Getting all current fragment instances.
+                if(fragments != null) {
+                    for (Fragment fragment : fragments) {                 // Iterate through list of fragments.
+                        if (fragment != null && fragment.isVisible())    // Checking which fragment is currently visible.
+                        {
+                            FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();  // Start a transaction for removing the current fragment.
+                            mTransaction.remove(fragment);
+                            mTransaction.commit();
+                            // Remove index from image database. Reupdate the app.
+                        }
+                    }
                 }
+
+
+                mAdapterPager.notifyDataSetChanged();     // Notify adapter that it needs to update the ViewPager. (IMG data change)
             }
-        }
+        });
 
     }
 
@@ -100,8 +135,19 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        IMGS.add(R.drawable.camera);
-        IMGS.add(R.drawable.common_full_open_on_phone);
+        ArrayList<String> mUriStrings = new ArrayList<String>();
+
+        Intent mIntent = getIntent();
+        mUriStrings = mIntent.getStringArrayListExtra(EXTRA_URI_LIST);
+
+        mUris = new ArrayList<>();
+
+        for(Integer i = 0; i < mUriStrings.size(); ++i) {
+            Uri mUriTemp = Uri.parse(mUriStrings.get(i));
+            mUris.add(mUriTemp);
+        }
+
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference(); // Initialize database reference.
 
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -127,14 +173,53 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
         });
 
 
+        // Listener for updating firebase data.
+        mDatabaseReference.addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mFirebaseDataImage = dataSnapshot.getValue(FirebaseDataImage.class);    // Get an image.
+                        // Create runnable for converting image.
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                }
+        );
+
+        mFirebaseStorage = FirebaseStorage.getInstance();       // Initialize storage references.
+
+        mStorageReference = mFirebaseStorage.getReference();
+
 
     }
+
+/*
+    class LooperThread extends Thread {
+        public Handler mHandler;
+
+        public void run() {
+            Looper.prepare();
+
+            mHandler = new Handler() {
+                public void handleMessage(Message msg) {
+                    // process incoming messages.
+                }
+            };
+
+            Looper.loop();
+        }
+    } */
+
     /**
      * Pager adapter for instantiating and passing data to fragments.
      */
     private class ViewPageFragmentAdapter extends FragmentStatePagerAdapter {
-
         private FragmentManager mFragmentManager;   // Local fragment manager variable.
+
+        public Integer mPosition = 1;
 
         /**
          *  Adapter constructor.
@@ -156,23 +241,7 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
         @Override
         public int getItemPosition(Object object) {
 
-            Fragment f = (Fragment) object;     // Cast the object to a Base Fragment.
-
-            // https://stackoverflow.com/questions/12321617/android-viewpager-move-any-page-to-end-programatically/14822077#14822077
-            // After reading this link the implementation for this function is clear: Check if the fragment still exists at position
-            // it was allocated for; Return POSITION_NONE to indicate the fragment is gone.
-            for(int i = 0; i < getCount(); i++) {   // Get number of fragments.
-
-                // TODO:
-                // I'm kinda confused on how this should work here, because getItem() seems to instantiate a new class rather than get the current references.
-                Fragment item = (Fragment) getItem(i);  // Iterate through fragments and ensure it's gone.
-                if(item.equals(f)) {
-                    // item still exists in dataset; return position
-                    return i;
-                }
-            }
-
-            // Fragment does not exist at this point.
+            // Value indicating fragment is destroyed.
             return PagerAdapter.POSITION_NONE;
         }
 
@@ -185,19 +254,21 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
          */
         @Override
         public Fragment getItem(int position) {
+
             if(position == 0)
             {
+                mPosition = position;
                 return new CameraControlFragment(); // Return camera controls for first fragment.
             }
             else if(position > 0)   // Views after the first position consist of images received.
             {
                 FragmentTransaction mTransaction = mFragmentManager.beginTransaction();
                 Bundle bundle = new Bundle();
-                bundle.putInt(ADAPTER_IMG_MSG, IMGS.get(position-1));
                 bundle.putInt(ADAPTER_POS_MSG,position);
                 PhotoGalleryFragment mFrag = new PhotoGalleryFragment();
                 mFrag.setArguments(bundle);
                 mTransaction.commit();
+                mPosition=position;
                 return mFrag;  // Returns fragment with layout containing picture.
             }
 
@@ -211,7 +282,9 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
          */
         @Override
         public int getCount() {
-            return IMGS.size() + 1;   // Return number of fragments. Adding one because of cameraControlFragment class.
+            // TODO
+            // Fix this count, its messing up how I manipulate the viewpager. Can't refresh properly.
+            return mUris.size() + 1;   // Return number of fragments. Adding one because of cameraControlFragment class.
         }
 
 

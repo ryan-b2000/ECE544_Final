@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -44,6 +43,9 @@
 #define INTC_DEVICE_ID			XPAR_INTC_0_DEVICE_ID
 #define FIT_INTERRUPT_ID		XPAR_MICROBLAZE_0_AXI_INTC_FIT_TIMER_0_INTERRUPT_INTR
 
+
+#define MAX_ADDRESS 19200
+
 /**************************** Type Definitions ******************************/
 
 /***************** Macros (Inline Functions) Definitions ********************/
@@ -69,7 +71,7 @@ int	 do_init(void);											// initialize system
 void FIT_Handler(void);										// fixed interval timer interrupt handler
 int AXI_Timer_initialize(void);
 
-void RunTest1(void);
+void OV7670_init(void);
 
 /************************** MAIN PROGRAM ************************************/
 int main(void)
@@ -86,26 +88,51 @@ int main(void)
 
 	microblaze_enable_interrupts();
 
-	// Run an iteration of the test
-	RunTest1();
-	
+	// Initialize Camera
+	OV7670_init();
+
 	while (1)
 	{
+		u32 btnU = 0;
+		u32 btnC = 0;
+		u32 btnD = 0;
+		u32 btnU_last = 0;
+		u32 btnC_last = 0;
+		u32 btnD_last = 0;
 
-		// check whether the center button is pressed.  If it is then
-		// exit the loop.
-		if (NX4IO_isPressed(BTNC))
+		btnC = NX4IO_isPressed(BTNC);
+		if (btnC && !btnC_last)
 		{
-			break;
+			OV7670_freeze();
 		}
-		else
+
+		btnU = NX4IO_isPressed(BTNU);
+		if (btnU && !btnU_last)
 		{
-			// increment the timestamp and delay 100 msecs
-			usleep(100 * 1000);
+			OV7670_unfreeze();
 		}
+
+		btnD = NX4IO_isPressed(BTND);
+		if (btnD && !btnD_last)
+		{
+			u32 address = 0;
+
+			for(int i = 0; i < MAX_ADDRESS; i++)
+			{
+				OV7670_setFrame(address);
+				OV7670_getFrame();
+				address += 1;
+			}
+			xil_printf("button down\n");
+		}
+
+		btnC_last = btnC;
+		btnU_last = btnU;
+		btnD_last = btnD;
+
+		usleep(5000 * 1000);
+
 	}
-
-	//NX4IO_setLEDs(0x0000);
 
 	usleep(5000 * 1000);
 	
@@ -114,105 +141,96 @@ int main(void)
     exit(0);
 }
 
-/************************ TEST FUNCTIONS ************************************/
-
 /****************************************************************************/
 /**
-* Test 1 - Test the LEDS (LD15..LD0)
-*
-* Checks the functionality of the LEDs API with some constant patterns and
-* a sliding patter.  Determine Pass/Fail by observing the LEDs on the Nexys4
-*
-* @param	*NONE*
-*
-* @return	*NONE*
-*
+Setup the OV7670 camera by initializing the registers
 *****************************************************************************/
-void RunTest1(void)
+void OV7670_init(void)
 {
-	OV7670_write_reg();	//OV7670_setup(0x12 80);
-	//OV7670_setup(0x12 80);
-	//OV7670_setup(0x12 04);
-	//OV7670_setup(0x11 00);
-	//OV7670_setup(0x0c 00);
-	//OV7670_setup(0x3e 00);
-	//OV7670_setup(0x8c 00);
-	//OV7670_setup(0x04 00);
-	//OV7670_setup(0x40 d0);
-	//OV7670_setup(0x3a 04);
-	//OV7670_setup(0x14 18);
-	//OV7670_setup(0x4f 40);
-	//OV7670_setup(0x50 34);
-	//OV7670_setup(0x51 0c);
-	//OV7670_setup(0x52 17);
-	//OV7670_setup(0x53 29);
-	//OV7670_setup(0x54 40);
-	//OV7670_setup(0x58 1e);
-	//OV7670_setup(0x3d c0);
-	//OV7670_setup(0x11 00);
-	//OV7670_setup(0x17 11);
-	//OV7670_setup(0x18 61);
-	//OV7670_setup(0x32 a4);
-	//OV7670_setup(0x19 03);
-	//OV7670_setup(0x1a 7b);
-	//OV7670_setup(0x03 0a);
-	//OV7670_setup(0x03 0a);
-	//OV7670_setup(0x1e 00);
-	//OV7670_setup(0x33 0b);
-	//OV7670_setup(0x3c 78);
-	//OV7670_setup(0x69 00);
-	//OV7670_setup(0x74 00);
-	//OV7670_setup(0xb0 84);
-	//OV7670_setup(0xb1 0c);
-	//OV7670_setup(0xb2 0e);
-	//OV7670_setup(0xb3 80); 
+	OV7670_setup(0x1280);
+	OV7670_setup(0x1280);
+	OV7670_setup(0x1204);
+	OV7670_setup(0x0c00); // test 0c08
+	OV7670_setup(0x1100);
+	OV7670_setup(0x3e00);
+	OV7670_setup(0x8c00);
+	OV7670_setup(0x0400);
+	OV7670_setup(0x40d0); // 40d0 or 10
+	OV7670_setup(0x3a04);
+	OV7670_setup(0x1418); // 1418 or 38
+	OV7670_setup(0x4f40);
+	OV7670_setup(0x5034);
+	OV7670_setup(0x510c);
+	OV7670_setup(0x5217);
+	OV7670_setup(0x5329);
+	OV7670_setup(0x5440);
+	OV7670_setup(0x581e);
+	OV7670_setup(0x3dc0);
+	OV7670_setup(0x1100);
+	OV7670_setup(0x1711);
+	OV7670_setup(0x1861);
+	OV7670_setup(0x32a4);
+	OV7670_setup(0x1903);
+	OV7670_setup(0x1a7b);
+	OV7670_setup(0x030a);
 
-	//OV7670_setup(0x70 3a);
-	//OV7670_setup(0x71 35);
-	//OV7670_setup(0x72 11);
-	//OV7670_setup(0x73 f0);
-	//OV7670_setup(0xa2 02); 
+	OV7670_setup(0x1e00);
+	OV7670_setup(0x330b);
+	OV7670_setup(0x3c78);
+	OV7670_setup(0x6900);
+	OV7670_setup(0x7410);
+	OV7670_setup(0xb084);
+	OV7670_setup(0xb10c);
+	OV7670_setup(0xb20e);
+	OV7670_setup(0xb382);
 
-	//OV7670_setup(0x7a 20);
-	//OV7670_setup(0x7b 10);
-	//OV7670_setup(0x7c 1e);
-	//OV7670_setup(0x7d 35);
-	//OV7670_setup(0x7e 5a);
-	//OV7670_setup(0x7f 69);
-	//OV7670_setup(0x80 76);
-	//OV7670_setup(0x81 80);
-	//OV7670_setup(0x82 88);
-	//OV7670_setup(0x83 8f);
-	//OV7670_setup(0x84 96);
-	//OV7670_setup(0x85 a3);
-	//OV7670_setup(0x86 af);
-	//OV7670_setup(0x87 c4);
-	//OV7670_setup(0x88 d7);
-	//OV7670_setup(0x89 e8); 
+	OV7670_setup(0x703a);
+	OV7670_setup(0x7135);
+	OV7670_setup(0x7211);
+	OV7670_setup(0x73f0);
+	OV7670_setup(0xa202);
 
-	//OV7670_setup(0x13 e0);
-	//OV7670_setup(0x00 00);
-	//OV7670_setup(0x10 00);
-	//OV7670_setup(0x0d 40);
-	//OV7670_setup(0x14 18);
-	//OV7670_setup(0xa5 05);
-	//OV7670_setup(0xab 07);
-	//OV7670_setup(0x24 95);
-	//OV7670_setup(0x25 33);
-	//OV7670_setup(0x26 e3);
-	//OV7670_setup(0x9f 78);
-	//OV7670_setup(0xa0 68);
-	//OV7670_setup(0xa1 03);
-	//OV7670_setup(0xa6 d8);
-	//OV7670_setup(0xa7 d8);
-	//OV7670_setup(0xa8 f0);
-	//OV7670_setup(0xa9 90);
-	//OV7670_setup(0xaa 94);
-	//OV7670_setup(0x13 e5);
-	//OV7670_setup(0x13 e5);
-	//OV7670_setup(0x13 e5);
-	//OV7670_setup(0xff ff);
- }
+	OV7670_setup(0x7a20);
+	OV7670_setup(0x7b10);
+	OV7670_setup(0x7c1e);
+	OV7670_setup(0x7d35);
+	OV7670_setup(0x7e5a);
+	OV7670_setup(0x7f69);
+	OV7670_setup(0x8076);
+	OV7670_setup(0x8180);
+	OV7670_setup(0x8288);
+	OV7670_setup(0x838f);
+	OV7670_setup(0x8496);
+	OV7670_setup(0x85a3);
+	OV7670_setup(0x86af);
+	OV7670_setup(0x87c4);
+	OV7670_setup(0x88d7);
+	OV7670_setup(0x89e8);
+
+	OV7670_setup(0x13e0);
+	OV7670_setup(0x0000);
+	OV7670_setup(0x1000);
+	OV7670_setup(0x0d40);
+	OV7670_setup(0x1418);
+	OV7670_setup(0xa505);
+	OV7670_setup(0xab07);
+	OV7670_setup(0x2495);
+	OV7670_setup(0x2533);
+	OV7670_setup(0x26e3);
+	OV7670_setup(0x9f78);
+	OV7670_setup(0xa068);
+	OV7670_setup(0xa103);
+	OV7670_setup(0xa6d8);
+	OV7670_setup(0xa7d8);
+	OV7670_setup(0xa8f0);
+	OV7670_setup(0xa990);
+	OV7670_setup(0xaa94);
+	OV7670_setup(0x13e5);
+	OV7670_setup(0x13e5);
+	OV7670_setup(0x13e5);
+	OV7670_setup(0xffff);
+
+}
 
 /**************************** HELPER FUNCTIONS ******************************/
 

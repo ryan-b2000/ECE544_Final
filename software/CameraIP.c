@@ -24,15 +24,31 @@ void OV7670_setup(u16 data)
 	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG1_OFFSET, data);
 }
 
-
 // allows you to freeze the picture. can be seen on the vga as well
 void OV7670_freeze()
 {
-	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG1_OFFSET, 0x0001ffff);
+	u32 wr_data;
+	wr_data = 0x0001ffff;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG1_OFFSET, wr_data);
 }
 
 // allows you to unfreeze the picture
 void OV7670_unfreeze()
 {
-	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG1_OFFSET, 0x0000ffff);
+	u32 wr_data;
+	wr_data = 0x0000ffff;
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG1_OFFSET, wr_data);
+}
+
+
+void OV7670_setFrame(u32 wr_data)
+{
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG2_OFFSET, wr_data);
+}
+
+void OV7670_getFrame()
+{
+	u32 data;
+	data = CAMERAIP_mReadReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG3_OFFSET);
+	xil_printf ("data -> %08x\n", data);
 }

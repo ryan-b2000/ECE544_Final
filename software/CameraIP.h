@@ -7,11 +7,6 @@
 #include "xstatus.h"
 #include "xil_io.h"
 
-#define CAMERAIP_S00_AXI_SLV_REG0_OFFSET 0
-#define CAMERAIP_S00_AXI_SLV_REG1_OFFSET 4
-#define CAMERAIP_S00_AXI_SLV_REG2_OFFSET 8
-#define CAMERAIP_S00_AXI_SLV_REG3_OFFSET 12
-
 #define OV7670_REG_GAIN	 	 	 	 	 (0x00)
 #define OV7670_REG_BLUE	 	 	 	 	 (0x01)
 #define OV7670_REG_RED	 	 	 	 	 (0x02)
@@ -215,6 +210,14 @@
 #define OV7670_REG_RSVD	 	 	 	 	 (0xC8)
 #define OV7670_REG_SATCTR	 	 	 	 (0xC9)
 
+
+
+#define CAMERAIP_S00_AXI_SLV_REG0_OFFSET 0
+#define CAMERAIP_S00_AXI_SLV_REG1_OFFSET 4
+#define CAMERAIP_S00_AXI_SLV_REG2_OFFSET 8
+#define CAMERAIP_S00_AXI_SLV_REG3_OFFSET 12
+
+
 /**************************** Type Definitions *****************************/
 /**
  *
@@ -281,5 +284,13 @@ XStatus CAMERAIP_Reg_SelfTest(u32 baseaddr_p);
 int OV7670_initialize(u32 BaseAddress);
 
 void OV7670_setup(u16 writeData);
+
+void OV7670_freeze();
+
+void OV7670_unfreeze();
+
+void OV7670_setFrame(u32 wr_data);
+
+void OV7670_getFrame();
 
 #endif // CAMERAIP_H

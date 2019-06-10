@@ -95,17 +95,19 @@ int AXI_Timer_initialize(void){
 
 void init_camera() {
 
+	OV7670_initialize(CAMERA_BASEADDR);
+
 	OV7670_setup(0x1280);
 	OV7670_setup(0x1280);
 	OV7670_setup(0x1204);
+	OV7670_setup(0x0c00); // test 0c08
 	OV7670_setup(0x1100);
-	OV7670_setup(0x0c00);
 	OV7670_setup(0x3e00);
 	OV7670_setup(0x8c00);
 	OV7670_setup(0x0400);
-	OV7670_setup(0x40d0);
+	OV7670_setup(0x40d0); // 40d0 or 10
 	OV7670_setup(0x3a04);
-	OV7670_setup(0x1418);
+	OV7670_setup(0x1418); // 1418 or 38
 	OV7670_setup(0x4f40);
 	OV7670_setup(0x5034);
 	OV7670_setup(0x510c);
@@ -121,16 +123,16 @@ void init_camera() {
 	OV7670_setup(0x1903);
 	OV7670_setup(0x1a7b);
 	OV7670_setup(0x030a);
-	OV7670_setup(0x030a);
+
 	OV7670_setup(0x1e00);
 	OV7670_setup(0x330b);
 	OV7670_setup(0x3c78);
 	OV7670_setup(0x6900);
-	OV7670_setup(0x7400);
+	OV7670_setup(0x7410);
 	OV7670_setup(0xb084);
 	OV7670_setup(0xb10c);
 	OV7670_setup(0xb20e);
-	OV7670_setup(0xb380);
+	OV7670_setup(0xb382);
 
 	OV7670_setup(0x703a);
 	OV7670_setup(0x7135);
@@ -177,5 +179,5 @@ void init_camera() {
 	OV7670_setup(0x13e5);
 	OV7670_setup(0x13e5);
 	OV7670_setup(0xffff);
-}
 
+	}

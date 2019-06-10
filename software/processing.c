@@ -7,7 +7,7 @@ static char b64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456
 
 
 
-u32 pixel_collector(uint16_t buff, u32 address) {
+u32 pixel_collector(uint16_t * buff, u32 address) {
     
     u8 buff_limit;
 

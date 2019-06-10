@@ -12,7 +12,7 @@
 #include "xtmrctr.h"
 #include "xgpio.h"
 #include "defines.h"
-#include "spi.h"
+//#include "spi.h"
 #include "uart.h"
 #include "processing.h"
 #include "init.h"
@@ -20,11 +20,14 @@
 #include "CameraIP.h"
 
 #define TX_DELAY 10
-
+#define CAMERA_COM_NONE	0
+#define CAMERA_COM_FREEZE 0
+#define CAMERA_COM_UNFREEZE 1
+#define CAMERA_COM_PICTURE 2
 
 void byte_assembler(u8 * data, u32 * index);
 void mySleep(u32 micros);
-
+u8 check_buttons();
 
 /************************** MAIN PROGRAM ************************************/
 int main(void)
@@ -34,7 +37,7 @@ int main(void)
 
     u8 camera_position;		// tracks position of the camera
     u8 camera_status;		// tracks if we are transferring an image or not
-
+    u8 command;				// commmand from NodeMCU
     u32 frame_address;
 
     // Initialize the system
@@ -45,6 +48,7 @@ int main(void)
 	// Enable interrupts and enable UART transmitter
 	microblaze_enable_interrupts();
 	uart_init(UART1_DEVICE_ID);
+
 	init_camera();
 
 	// Initialize variables
@@ -55,7 +59,19 @@ int main(void)
 	while(1) {
 
 		// Handle any updates from the NodeMCU that the app made a change
+		command = check_buttons();
 
+		if (command == CAMERA_COM_FREEZE) {
+			OV7670_freeze();
+		}
+		// command was to unfreeze the camera
+		else if (command == CAMERA_COM_UNFREEZE) {
+			OV7670_unfreeze();
+		}
+		// command was to take a picture
+		else if (command == CAMERA_COM_PICTURE) {
+			camera_status = IMAGE_TRANSFER_PROG;
+		}
 		
 
 		// Handle the image transfer process
@@ -65,8 +81,8 @@ int main(void)
 			if (check_cts_pin() == OK_TO_SEND) {
 
 				// collect pixel data from camera
-				frame_address = pixel_collector(pxl_words_buff, address);
-				
+				frame_address = pixel_collector(pxl_words_buff, frame_address);
+
 				// encode pixel data into byte64
 				base64_encoder(pxl_words_buff, SIZE_PIXEL_BUFF, pxl_bytes_buff, SIZE_BYTES_BUFF);
 
@@ -74,6 +90,12 @@ int main(void)
 
 				// transmit to nodeMCU (blocks until transfer is complete)
 				uart_transmit(pxl_bytes_buff, SIZE_BYTES_BUFF);
+			}
+
+			// check if the image transfer is complete
+			if (frame_address >= FRAME_MAX_ADDRESS) {
+				frame_address = 0;
+				camera_status = IMAGE_TRANSFER_IDLE;
 			}
 		}
 	}
@@ -102,21 +124,21 @@ u8 check_buttons() {
 	btnC = NX4IO_isPressed(BTNC);
 	if (btnC && !btnC_last)
 	{
-		command = CAMERA_UNFREEZE;
+		command = CAMERA_COM_UNFREEZE;
 		//OV7670_freeze();
 	}
 
 	btnU = NX4IO_isPressed(BTNU);
 	if (btnU && !btnU_last)
 	{
-		command = CAMERA_FREEZE;
+		command = CAMERA_COM_FREEZE;
 		//OV7670_unfreeze();
 	}
 
 	btnD = NX4IO_isPressed(BTND);
 	if (btnD && !btnD_last)
 	{
-		command = CAMERA_PICTURE;
+		command = CAMERA_COM_PICTURE;
 	}
 
 	btnC_last = btnC;

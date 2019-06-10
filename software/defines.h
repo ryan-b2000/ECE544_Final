@@ -45,6 +45,9 @@
 #define UART1_DEVICE_ID			XPAR_UARTLITE_1_DEVICE_ID
 #define UART1_BASEADDR			XPAR_UARTLITE_1_BASEADDR
 
+
+#define CAMERA_BASEADDR			XPAR_CAMERAIP_0_S00_AXI_BASEADDR
+
 // Camera status defines
 #define IMAGE_TRANSFER_IDLE 0	// not doing an image transfer
 #define IMAGE_TRANSFER_PROG 1	// in the middle of doing an image transfer

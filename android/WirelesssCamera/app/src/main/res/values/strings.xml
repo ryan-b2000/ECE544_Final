@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">WirelesssCamera</string>
-    <string name="textview_cam_pos">Camera Position</string>
-    <string name="textview_cam_cap_rates">Capture Rate</string>
-    <string name="switch_cam_mode"> Manual Capture Mode</string>
-    <string name="capture">CAPTURE</string>
-    <string name="text_option">Image Options</string>
-
-</resources>

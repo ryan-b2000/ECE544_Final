@@ -23,7 +23,7 @@
 
 // Definitions for peripheral NEXYS4IO
 #define NX4IO_DEVICE_ID			XPAR_NEXYS4IO_0_DEVICE_ID
-#define NX4IO_BASEADDR			0x44A00000
+#define NX4IO_BASEADDR			0x44A10000
 #define NX4IO_HIGHADDR			0x44A0FFFF
 
 // Fixed Interval timer - 100 MHz input clock, 40KHz output clock
@@ -49,12 +49,12 @@
 #define CAMERA_BASEADDR			XPAR_CAMERAIP_0_S00_AXI_BASEADDR
 
 // Camera status defines
-#define IMAGE_TRANSFER_IDLE 0	// not doing an image transfer
-#define IMAGE_TRANSFER_PROG 1	// in the middle of doing an image transfer
+#define TRANSFER_END 0		// send RTS pin low at the end of the transfer
+#define TRANSFER_BEGIN 1	// send RTS pin high at the beginning of the transfer
 
 #define FRAME_MAX_ADDRESS 19200
-#define SIZE_PIXEL_BUFF (38)						// number of pixel words in the buffer
-#define SIZE_BYTES_BUFF	(2* SIZE_PIXEL_BUFF + 1)	// number of pixel bytes in the buffer
+#define SIZE_PIXEL_BUFF (8)						// number of pixel words in the buffer
+#define SIZE_BYTES_BUFF	(2* SIZE_PIXEL_BUFF)	// number of pixel bytes in the buffer
 
 
 /************************** Variable Definitions ****************************/
@@ -63,3 +63,6 @@
 XIntc 		IntrptCtlrInst;				// Interrupt Controller instance
 XTmrCtr		AXITimerInst;				// PWM timer instance
 XGpio		GPIOInst0;					// GPIO instance
+
+
+void mySleep(u32 micros);

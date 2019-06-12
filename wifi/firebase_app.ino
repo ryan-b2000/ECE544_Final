@@ -17,7 +17,6 @@
 #include <WiFiClientSecureBearSSL.h>
 #include <WiFiClientSecure.h>
 #include <WiFiClient.h>
-
 #include <FirebaseError.h>
 #include <FirebaseArduino.h>
 #include <Firebase.h>
@@ -26,12 +25,9 @@
 #include <FirebaseCloudMessaging.h>
 #include <ArduinoJson.h>
 
-#include <SPI.h>
-
-#include "buffer.h"
-
-#define FIREBASE_HOST "finalproject558.firebaseio.com"
-//#define FIREBASE_HOST "mcu-test-962d2.firebaseio.com"
+// ********************************* DEFINES *********************************************
+//#define FIREBASE_HOST "finalproject558.firebaseio.com"
+#define FIREBASE_HOST "mcu-test-962d2.firebaseio.com"
 #define FIREBASE_AUTH ""
 
 #define WIFI_SSID_HOME "Lando's Wifi"
@@ -43,27 +39,20 @@
 // so that we can get access to string class
 #define ARDUINOJSON_ENABLE_ARDUINO_STRING 1
 
-#define PIN_CTS D1
-#define PIN_RTS D2
-#define PIN_LED D4
+#define PIN_CTS D1                            // clear to send data from FPGA
+#define PIN_RTS D2                            // FPGA signals data transter start/stop
+#define PIN_LED D4                            // led blinker
 
-#define PASS 1
-#define FAIL 0
+#define TIMER_PERIOD 900000      
 
-#define TRUE 1
-#define FALSE 0
+#define FIREBASE_TX_START 1                   // value to notify Firebase that a transfer is beginning
+#define FIREBASE_TX_END 2                     // value to notify that a transfer has ended
 
-#define TIMER_PERIOD 300000      
+#define FIREBASE_DELAY 100                    // time to wait between updates to Firebase
+#define MAX_STRING_SIZE 1024                  // MAX size of a char string to write to Firebase
 
-#define FIREBASE_TX_START 0
-#define FIREBASE_TX_END 1
-
-#define TEST_DELAY 10000
-#define FIREBASE_DELAY 1000
-#define MAX_STRING_SIZE 1024
-
-#define STAT_IDLE 0
-#define STAT_TRANSFER 1
+#define STAT_IDLE 0                           // transfer to Firebase is idle
+#define STAT_TRANSFER 1                       // transfer to Firebase is in progress
 
 #define FB_MEMBERS_UPDATE 1                   // there was an update from the app
 #define FB_MEMBERS_OK 0                       // no change in any firebase members
@@ -73,7 +62,7 @@
 #define FB_CAPTURE_YES 1                      // 1 if a picture is to be taken
 
 
-
+// ********************************* VARIABLES *********************************************
 typedef struct {
   uint8_t status;
   uint8_t position;
@@ -81,86 +70,76 @@ typedef struct {
 } db_members;
 
 // Global Class Members
-buffer databuff;
 FirebaseArduino fb;
-
 db_members dbm;
 
-volatile uint8_t timer_int;
-
-String image_labels [40] = {
-"image_01", "image_02", "image_03", "image_04", "image_05",
-"image_06", "image_07", "image_08", "image_09", "image_10",
-"image_11", "image_12", "image_13", "image_14", "image_15",
-"image_16", "image_17", "image_18", "image_19", "image_20",
-"image_21", "image_22", "image_23", "image_24", "image_25",
-"image_26", "image_27", "image_28", "image_29", "image_30",
-"image_31", "image_32", "image_33", "image_34", "image_35",
-"image_36", "image_37", "image_38", "image_39", "image_40"};
+// Interrupt variables
+volatile uint8_t timer_flag;
 
 
+/**
+ * @brief Timer Interrupt Handler
+ * @details Set the flag for main loop to check Firebase for changes
+ * @return none
+ */
 void ICACHE_RAM_ATTR onTimerISR(){
     
     // set the database members status update for main loop
     // to check if the database members have been updated
-    timer_int = FB_MEMBERS_UPDATE;
+    timer_flag = FB_MEMBERS_UPDATE;
 
     // reset timer 
     timer1_write(TIMER_PERIOD);
 }
-// PROGRAM SETUP
-// *******************************************************************************
-void setup() {
 
-	// Set up Serial port for debugging
-	Serial.begin(115200);
-	delay(500);
 
-	// Initialize GPIO pins
+// ********************************* SETUP *********************************************
+void setup() {}
+
+// ********************************** MAIN **********************************************
+void loop() {
+
+  uint8_t status;
+  char buff [MAX_STRING_SIZE];            //  1K character buffer of received characters
+  int buff_i = 0;                         //  index to the buffer
+  uint8_t transfer_status = STAT_IDLE;    //  transfer transfer_status
+  uint8_t rts_pin;                        //  RTS pin transfer_status
+  uint8_t transfer_count = 0;             //  Number of transfers per image
+  int char_count = 0;                     //  count of characters that were sent 
+  
+    // Set up Serial port for debugging
+  Serial.begin(115200);
+  delay(500);
+
+  // Initialize GPIO pins
   pinMode(PIN_CTS, OUTPUT);
   pinMode(PIN_RTS, INPUT);
   pinMode(PIN_LED, OUTPUT);
 
-	// Connect to local WIFI
-	WiFi.begin(WIFI_SSID_HOME, WIFI_PASSWORD_HOME);
-	//WiFi.begin(WIFI_SSID_MOBILE, WIFI_PASSWORD_MOBILE);
-	Serial.print("connecting");
-	while (WiFi.status() != WL_CONNECTED) {
-		Serial.print(".");
-		delay(250);
-	}
-	Serial.println();
-	Serial.print("connected: ");
-	Serial.println(WiFi.localIP());
+  // Connect to local WIFI
+  WiFi.begin(WIFI_SSID_HOME, WIFI_PASSWORD_HOME);
+  //WiFi.begin(WIFI_SSID_MOBILE, WIFI_PASSWORD_MOBILE);
+  Serial.print("connecting");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(250);
+  }
+  Serial.println();
+  Serial.print("connected: ");
+  Serial.println(WiFi.localIP());
 
-	// Firebase Connection Initialize
-	Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+  // Firebase Connection Initialize
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
 
   dbm.status = FB_MEMBERS_OK;     // members synced with Firebase
   dbm.capture = FB_CAPTURE_NO;    
   dbm.position = 0;
 
-  timer_int = FB_MEMBERS_OK;
-
-  SPI.begin();
-
   //Initialize Timer to poll database for changes
   timer1_attachInterrupt(onTimerISR);
   timer1_enable(TIM_DIV256, TIM_EDGE, TIM_SINGLE);
   timer1_write(TIMER_PERIOD); 
-}
-
-
-
-// MAIN CONTROL
-// *******************************************************************************
-void loop() {
-
-  uint8_t label_i = 0;
-  int buff_i = 0;
-  char buff [MAX_STRING_SIZE];
-  uint8_t status = STAT_IDLE;
-  uint8_t rts_pin;
+  timer_flag = FB_MEMBERS_OK;
 
   // signal that we are ready to receive data
   digitalWrite(PIN_CTS, LOW);
@@ -168,57 +147,58 @@ void loop() {
   while(1) {
     
     // Check if there is any data in the serial buffer
-    if (Serial.available()) {
-      buff[buff_i] = Serial.read();     // read the incoming byte
+    while (Serial.available()) {
+      buff[buff_i] = Serial.read();     
       ++buff_i;
+      ++char_count;
+
+      // if we have received enough bytes, time to write to Firebase
+      if (buff_i == MAX_STRING_SIZE) {
+        buff_i = 0;
+        
+        write_database(buff);  
+        ++transfer_count;
+        Serial.print(buff); Serial.print("\n");    
+      } 
     }
 
-    // Check if the app has changed any of the database members to move the camera
-    // or to take a picture. Datamembers are updated in ISR
-    if (timer_int == FB_MEMBERS_UPDATE) {
-      timer_int = FB_MEMBERS_OK;
-
-      // read from the database and check if the members have changed
-      if (read_database(dbm) == FB_MEMBERS_UPDATE){
-        Serial.print("Read from database: ");
-        Serial.print("Pos: "); Serial.print(dbm.position);
-        Serial.print(" Cap: "); Serial.print(dbm.capture);
-        Serial.print("\n");  
-
-        SPI.transfer(dbm.position);
-        SPI.transfer(dbm.capture);
-      }
+    // Check if the FPGA has signaled that the transfer is beginning
+    if ((rts_pin == HIGH) && (transfer_status == IDLE)){
+      status = TRANSFER;
+      Firebase.setInt("TX-RX", FIREBASE_TX_START);
     }
 
-    // Check if we are starting a new transfer or completing a transfer
-    // FPGA sets RTS -> LOW to begin a transfer and the NodeMCU write to 
-    // a flag so that the App knows a new image transfer is about to begin
+    // Check if the FPGA has signaled that the transfer is complete (RTS goes LOW)
     rts_pin = digitalRead(PIN_RTS);
-    if ((rts_pin == LOW) && (status == STAT_IDLE)) {
-        status = STAT_TRANSFER;                        // change to transfer status
-        Firebase.setInt("TX-RX", FIREBASE_TX_START);   // let Firebase know      
-    }
-    // When the image transfer is finished, the FPGA sets RTS -> HIGH to indicate
-    // the transfer is complete and the NodeMCU writes a flag in the database to
-    // let the app know that the transfer is complete
-    else if ((rts_pin == HIGH) && (status == STAT_TRANSFER)) {
-        status = STAT_IDLE;                         // transition to IDLE status
-        Firebase.setInt("TX-RX", FIREBASE_TX_END);  // let Firebase know image transfer is done
+    if ((rts_pin == LOW) && (transfer_status == STAT_TRANSFER)) {
+        status = STAT_IDLE;                                   
+        
+        // let Firebase know image transfer is done
+        Firebase.setInt("TX-RX", FIREBASE_TX_END);            
+        transfer_count = 0;
+        
+        print_transfer_count(char_count);
+
+        // Update Firebase with any leftover data
+        Serial.print(buff); Serial.print("\n"); 
+        write_database(buff);
     }
 
-    // if we have received enough bytes, time to write to Firebase
-    if (buff_i == MAX_STRING_SIZE) {
-      buff_i = 0;
-      digitalWrite(PIN_CTS, HIGH);      // deassert CTS to halt the transfers from sender
-      write_database(buff);
-      delay(FIREBASE_DELAY);            // wait for upload to Firebase
-      digitalWrite(PIN_CTS, LOW);       // clear string and wait for more bytes
-    } 
-  }
+    // Check Firebase for any updates from Android application
+    if (timer_flag == FB_MEMBERS_UPDATE) {
+      timer_flag = FB_MEMBERS_OK;
+    }
+  }  
 }
 
 
-
+/**
+ * @brief Read from Firebase
+ * @details Check to see if the Android app updated any data members
+ * 
+ * @param dbm is a structure of the data members we are interested in
+ * @return status of whether the data members are updated
+ */
 uint8_t read_database(db_members & dbm) {
 
   static uint8_t position = 0;
@@ -240,62 +220,63 @@ uint8_t read_database(db_members & dbm) {
 }
 
 
-
-
 /**
- * @brief Write to Firebase
+ * @brief   Write to Firebase
  * @details Writes a 1K string of image data to the firebase node for the images.
  *          The strings are an array of char of byte64 encoded data. They have to
  *          be wrapped in a JSON Variant from the Arduino JSON library in order to
  *          be properly transferred.
  *          
- * @param data is a pointer to the buffer for the data
+ * @param   data is a pointer to the buffer for the data
  */
 void write_database(char * data) {
+
+  digitalWrite(PIN_CTS, HIGH);                            // Halt transfers from FPGA
+
+  JsonVariant jvar = data;                                // Package the char array as a JSON Variant
+  Firebase.set("rt_image", jvar);                         // write the JSON Variant with the 1K string to Firebase
+  if (Firebase.failed()) {
+    //Serial.print("Write failed. "); Serial.print("\n"); 
+    // API returns fail but data is getting written OK
+
+    //Serial.print(Firebase.error());                       // If the write fails, try again...
+    //delay(FIREBASE_DELAY);                                // However, once it fails it never comes back...
+  }                                                       
+
+  delay(FIREBASE_DELAY);                                  // Give Firebase some time to update
   
-    uint8_t status = FAIL;
-    static uint8_t label_i = 0;
-
-    JsonVariant jvar = data;
-
-    Serial.print("Write to database:\n"); 
-    Serial.print(data); Serial.print("\n");
-
-    while (status == FAIL) {
-
-      Firebase.set("rt_image", jvar);
-      if (Firebase.failed()) {
-        Serial.print("Write failed. "); Serial.print("rt_image"); Serial.print("\n"); 
-        Serial.print(Firebase.error());
-        delay(FIREBASE_DELAY);
-      }
-      else {
-        Serial.print("Write success.\n");
-        status = PASS;
-        label_i++;
-
-        if (label_i == 40)
-          label_i = 0;
-      } 
-    }
+  digitalWrite(PIN_CTS, LOW);                             // Resume transfers from FPGA
 }
 
 
-
-// Blink LED on receiving a word
+/**
+ * @brief Blink LED
+ * @details Blink for testing purposes
+ * 
+ * @param pin of the LED to blink
+ */
 void blinkLED(uint8_t pin){
-	static int state = 0;
+  static int state = 0;
 
-	if (state)
-	{
-		digitalWrite(pin, HIGH);
-		state = 0;
-	}
-	else
-	{
-		digitalWrite(pin, LOW);
-		state = 1;
-	}
+  if (state)
+  {
+    digitalWrite(pin, HIGH);
+    state = 0;
+  }
+  else
+  {
+    digitalWrite(pin, LOW);
+    state = 1;
+  }
 }
 
 
+/**
+ * @brief Print the number of characters written to Firebase
+ * @details print for debugging purposes
+ * 
+ * @param count is the amount of characters transferred
+ */
+void print_transfer_count(int count) {
+  Serial.print("Transferred: "); Serial.print(count); Serial.print("\n");
+}

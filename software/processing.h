@@ -11,5 +11,8 @@ u8 check_cts_pin();
 
 u32 pixel_collector(uint16_t * buff, u32 address);
 
+void byte_assembler(uint16_t * in, uint8_t * out);
 
-void base64_encoder (uint16_t * in, uint8_t sizein, uint8_t * out, uint8_t sizeout);
+void base64_encoder (uint16_t * in, uint8_t * out);
+
+void set_rts_pin(u8 status);

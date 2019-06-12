@@ -25,9 +25,10 @@
 #define CAMERA_COM_UNFREEZE 1
 #define CAMERA_COM_PICTURE 2
 
-void byte_assembler(u8 * data, u32 * index);
-void mySleep(u32 micros);
+
 u8 check_buttons();
+void print_data_out(u8 * data);
+
 
 /************************** MAIN PROGRAM ************************************/
 int main(void)
@@ -39,6 +40,7 @@ int main(void)
     u8 camera_status;		// tracks if we are transferring an image or not
     u8 command;				// commmand from NodeMCU
     u32 frame_address;
+    u8 count = 0;
 
     // Initialize the system
 	init_platform();
@@ -47,13 +49,10 @@ int main(void)
 
 	// Enable interrupts and enable UART transmitter
 	microblaze_enable_interrupts();
-	uart_init(UART1_DEVICE_ID);
 
-	init_camera();
 
 	// Initialize variables
 	camera_position = 0;
-	camera_status = IMAGE_TRANSFER_IDLE;
 	frame_address = 0;
 
 	while(1) {
@@ -61,44 +60,59 @@ int main(void)
 		// Handle any updates from the NodeMCU that the app made a change
 		command = check_buttons();
 
-		if (command == CAMERA_COM_FREEZE) {
-			OV7670_freeze();
-		}
-		// command was to unfreeze the camera
-		else if (command == CAMERA_COM_UNFREEZE) {
-			OV7670_unfreeze();
-		}
-		// command was to take a picture
-		else if (command == CAMERA_COM_PICTURE) {
-			camera_status = IMAGE_TRANSFER_PROG;
-		}
-		
+		if (command == CAMERA_COM_PICTURE) {
 
-		// Handle the image transfer process
-		if (camera_status == IMAGE_TRANSFER_PROG) {
 
-			// check if NodeMCU is ready for next data burst
-			if (check_cts_pin() == OK_TO_SEND) {
+			while (1) {
 
-				// collect pixel data from camera
-				frame_address = pixel_collector(pxl_words_buff, frame_address);
+				count = 0;
 
-				// encode pixel data into byte64
-				base64_encoder(pxl_words_buff, SIZE_PIXEL_BUFF, pxl_bytes_buff, SIZE_BYTES_BUFF);
+				OV7670_freeze();
 
-				// append extra new line (if needed)
+				// set RTS pin HIGH for NodeMCU to update database that a transfer is about to begin
+				set_rts_pin(TRANSFER_BEGIN);
 
-				// transmit to nodeMCU (blocks until transfer is complete)
-				uart_transmit(pxl_bytes_buff, SIZE_BYTES_BUFF);
-			}
+				// transmit the data
+				while (frame_address < FRAME_MAX_ADDRESS) {
 
-			// check if the image transfer is complete
-			if (frame_address >= FRAME_MAX_ADDRESS) {
+
+					if (check_cts_pin() == OK_TO_SEND) {
+
+						//xil_printf("Addr: %d\n", frame_address);
+
+						// get 8 pixel words from the camera
+						frame_address = pixel_collector(pxl_words_buff, frame_address);
+
+						// convert 8 pixel words to 16 ASCII bytes
+						base64_encoder(pxl_words_buff, pxl_bytes_buff);
+
+						// print data_out
+						print_data_out(pxl_bytes_buff);
+
+						// transmit to nodeMCU (blocks until transfer is complete)
+						uart_transmit(pxl_bytes_buff, SIZE_BYTES_BUFF);
+
+						count += 16;
+					}
+					else {
+						mySleep(TX_DELAY);
+					}
+				}
+
+				set_rts_pin(TRANSFER_END);
+				OV7670_unfreeze();
+
+				xil_printf("Transferred: %d", count);
+				count = 0;
+
 				frame_address = 0;
-				camera_status = IMAGE_TRANSFER_IDLE;
 			}
-		}
+
+			mySleep(10000);
+		}// -infinite loop
 	}
+
+
 
 	// cleanup and exit
     cleanup_platform();
@@ -106,6 +120,13 @@ int main(void)
 }
 
 
+
+void print_data_out(u8 * data) {
+	for (int i = 0; i < SIZE_BYTES_BUFF; ++i){
+		xil_printf("%c", data[i]);
+	}
+	xil_printf("\n");
+}
 
 /**
  * @brief Check the buttons and return command for button press
@@ -124,10 +145,10 @@ u8 check_buttons() {
 	btnC = NX4IO_isPressed(BTNC);
 	if (btnC && !btnC_last)
 	{
-		command = CAMERA_COM_UNFREEZE;
+		command = CAMERA_COM_PICTURE;
 		//OV7670_freeze();
 	}
-
+/*
 	btnU = NX4IO_isPressed(BTNU);
 	if (btnU && !btnU_last)
 	{
@@ -140,7 +161,7 @@ u8 check_buttons() {
 	{
 		command = CAMERA_COM_PICTURE;
 	}
-
+*/
 	btnC_last = btnC;
 	btnU_last = btnU;
 	btnD_last = btnD;
@@ -159,6 +180,6 @@ void mySleep(u32 micros) {
 
 	u32 count;
 
-	for (count = micros * 10000; count > 0; --count)
+	for (count = micros * 100; count > 0; --count)
 		;
 }

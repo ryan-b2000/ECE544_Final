@@ -13,3 +13,6 @@ void uart_init(u16 DeviceID);
  * @param data [description]
  */
 void uart_transmit(u8 * data, u8 numbytes);
+
+
+u8 uart_check_received(u8 * data);

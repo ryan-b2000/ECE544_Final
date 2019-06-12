@@ -21,10 +21,10 @@ int do_init(void)
 	{
 		return XST_FAILURE;
 	}
-	// GPIO0 channel 1 is an 8-bit input port.
-	// GPIO0 channel 2 is an 8-bit output port.
-	//XGpio_SetDataDirection(&GPIOInst0, GPIO_0_OUTPUT_0_CHANNEL, 0xFF);
-	//XGpio_SetDataDirection(&GPIOInst0, GPIO_0_OUTPUT_1_CHANNEL, 0x00);
+
+	// 0 = output, 1 = input
+	XGpio_SetDataDirection(&GPIOInst0, GPIO_0_OUTPUT_CHANNEL, 0x0);
+	XGpio_SetDataDirection(&GPIOInst0, GPIO_0_INPUT_CHANNEL, 0x1);
 
 	// initialize the AXI timer
 	status = AXI_Timer_initialize();
@@ -48,9 +48,11 @@ int do_init(void)
 		return XST_FAILURE;
 	}
 
-
 	// initialize the UART
 	uart_init(UART1_DEVICE_ID);
+
+	// initialize the camera
+	init_camera();
 
 	return XST_SUCCESS;
 }
@@ -96,6 +98,8 @@ int AXI_Timer_initialize(void){
 void init_camera() {
 
 	OV7670_initialize(CAMERA_BASEADDR);
+
+	xil_printf("Camera base address set.\n");
 
 	OV7670_setup(0x1280);
 	OV7670_setup(0x1280);
@@ -179,5 +183,8 @@ void init_camera() {
 	OV7670_setup(0x13e5);
 	OV7670_setup(0x13e5);
 	OV7670_setup(0xffff);
+
+	xil_printf("Camera initialized successfully.\n");
+
 
 	}

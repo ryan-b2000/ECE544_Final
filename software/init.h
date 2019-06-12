@@ -3,6 +3,8 @@
 #include "xparameters.h"
 #include "defines.h"
 #include <stdint.h>
+#include "CameraIP.h"
+#include "uart.h"
 
 /************************** Function Prototypes *****************************/
 int	 do_init(void);											// initialize system

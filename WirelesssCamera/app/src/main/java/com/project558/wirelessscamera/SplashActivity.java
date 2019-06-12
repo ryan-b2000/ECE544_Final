@@ -3,7 +3,7 @@
  *  Date: 6/7/2019
  *
  *  This class manages the splash screen and loads resources on launch
- *  via an Async task. Grabs strings from Firebase and converts to image.
+ *  via an Async task. Grabs strings from Firebase and creates intent for main activity.
  *
  *  Big Nerd Ranch link for properly implementing Splash Activities:
  *      https://www.bignerdranch.com/blog/splash-screens-the-right-way/
@@ -18,24 +18,22 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 /**
  * Activity for displaying splash screen.
  *
  */
 public class SplashActivity extends AppCompatActivity {
-    private static final String EXTRA_URI_LIST = "uri_list";
-    private static final String TAG = "Splash";
 
-    private StorageReference mStorageReference;     // Declaration of object.
+    private static final String TAG = "Splash";     // tag key.
+
+    private StorageReference mStorageReference;     // Declaration of Firebase objects.
     private FirebaseStorage mFirebaseStorage;
 
     /**
@@ -60,6 +58,7 @@ public class SplashActivity extends AppCompatActivity {
      * Subclass of Splash Activity.
      * Thread to convert encoded string to an image.
      * Passes results to the MainActivity.
+     * No arguments to thread.
      */
     private class GetAppResources extends AsyncTask<Void, Void, Void> {
 
@@ -77,17 +76,16 @@ public class SplashActivity extends AppCompatActivity {
 
             Integer mNumImages =1;
             mUris = new ArrayList<>();
+            while(mNumImages < 15) {
+                String pos = Integer.toString(mNumImages);      // Iterate through a range of images and fetch from Firebase storage.
+                String toFetch = "img" + pos + ".png";
 
-            while(mNumImages < 15)
-            {
-                String pos = Integer.toString(mNumImages);
-                String toFetch = "img"+ pos + ".png";
-                mStorageReference.child(toFetch).getDownloadUrl().addOnSuccessListener(
+                mStorageReference.child(toFetch).getDownloadUrl().addOnSuccessListener( // Listener waiting for successful fetch
                         new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
                                 // Add to string here:
-                                mUris.add(uri);
+                                mUris.add(uri); // Add to array of URIs.
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -96,13 +94,14 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
-                mNumImages += 1;
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(300);
                 }catch (InterruptedException e) {
 
                 }
+                mNumImages += 1;
             }
+
             return null;
         }
 
@@ -118,10 +117,10 @@ public class SplashActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+
             Intent intentObj = new Intent(SplashActivity.this,MainActivity.class);  // Intent is to create activity.
-            // TODO: Add extras with data needed for MainActivity.
             ArrayList<String> mTemp = new ArrayList<>();
-            for(Integer i = 0; i < mUris.size(); ++i) {
+            for(int i = 0; i<mUris.size(); ++i) {
                 mTemp.add(mUris.get(i).toString());
             }
             intentObj.putStringArrayListExtra(MainActivity.EXTRA_URI_LIST,mTemp);

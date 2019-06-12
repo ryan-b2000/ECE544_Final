@@ -13,8 +13,8 @@
 
     <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/button_set_position"
-        android:layout_width="39dp"
-        android:layout_height="27dp"
+        android:layout_width="56dp"
+        android:layout_height="35dp"
         android:layout_marginLeft="0dp"
         android:hapticFeedbackEnabled="true"
         android:paddingLeft="5dp"

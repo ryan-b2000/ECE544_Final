@@ -2,8 +2,7 @@
  *  Names: Ryan Bentz, Ryan Bornhorst, Andrew Capatina
  *  Date: 6/7/2019
  *
- *  This file contains the fragment which inflates a layout
- *  that essentially contains an image. One class instantiated
+ *  Fragment responsible for displaying bitmaps. One class instantiated
  *  per image retrieved.
  *  This class also implements the View.onClickListener function
  *  to support options like deleting the image. MainActivity overrides the onClick method.
@@ -11,8 +10,7 @@
  */
 package com.project558.wirelessscamera;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -25,8 +23,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.ArrayList;
-
 import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
@@ -37,20 +33,22 @@ import mehdi.sakout.fancybuttons.FancyButton;
  */
 public class PhotoGalleryFragment extends Fragment implements  View.OnClickListener{
 
-    private static final String ADAPTER_IMG_MSG = "image";          // key associated with position value. Packed with bundle when creating fragment
     private static final String ADAPTER_POS_MSG   = "position";     // Key associated with the position of fragment in viewpager.
     private FancyButton mBtnDelete;                                 // Declaration of FancyButton object.
-    private int mPosition = 0;                                      // Contains position of fragment with respect to main activity viewpager.
-    private StorageReference mStorageReference;     // Declaration of object.
+    private Integer mPosition = 0;                                  // Position of fragment with respect to viewpager.
+    private StorageReference mStorageReference;                     // Declaration of Firebase objects.
     private FirebaseStorage mFirebaseStorage;
 
     /**
+     *  Method to inflate View and set imageView
+     *  with a bitmap. The URI is created using the position
+     *  given from MainActivity.
      *
      *
      * @param inflater  Layout inflate from adapter.
      * @param container Viewgroup object.
      * @param savedInstanceState  Application context
-     * @return  inflated view.
+     * @return  Inflated view.
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -63,29 +61,32 @@ public class PhotoGalleryFragment extends Fragment implements  View.OnClickListe
         Bundle bundle = this.getArguments();
         if(bundle != null)
         {
-            Integer mDrawable = bundle.getInt(ADAPTER_IMG_MSG);
             mPosition = bundle.getInt(ADAPTER_POS_MSG);
+        }
+
             mFirebaseStorage = FirebaseStorage.getInstance();       // Initialize storage references.
 
             mStorageReference = mFirebaseStorage.getReference();
-            String mToDisp = "img" + Integer.toString(mPosition) + ".png";
-            mStorageReference.child(mToDisp).getBytes(1024*1024).addOnSuccessListener(
-                    new OnSuccessListener<byte[]>() {
-                        @Override
-                        public void onSuccess(byte[] bytes) {
-                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            mImageView.setImageBitmap(bmp);
 
-                        }
-                    }
-            );
-            // Set image resource with data received through bundle argument.
-            //mImageView.setImageResource(mDrawable);
-        }
+            mStorageReference.child("img" + Integer.toString(mPosition)+ ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+
+                    // https://github.com/codepath/android_guides/wiki/Displaying-Images-with-the-Glide-Library
+                    // Was having issues getting the URI to show, using the Glide library worked.
+                    Glide.with(getContext())
+                            .load(uri)
+                            .override(1024,900)
+                            .centerCrop()
+                            .fitCenter()
+                            .into(mImageView);
+
+                }
+            });
 
         mBtnDelete.setOnClickListener(this);    // Class implements onClickListener.
 
-        return rootView;
+        return rootView;    // Return inflated View.
     }
 
     /**

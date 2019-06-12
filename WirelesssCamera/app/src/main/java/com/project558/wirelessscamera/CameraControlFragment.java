@@ -6,7 +6,8 @@
  *  Description:
  *      File setting up layout and communication for the UI controls
  *      of the Android app. User can modify capture rate, camera position,
- *      and select manual capture mode using this UI.
+ *      and select manual capture mode using this UI. Activities main
+ *      purpose is to communicate with Firebase.
  *
  */
 package com.project558.wirelessscamera;
@@ -56,22 +57,23 @@ public class CameraControlFragment extends Fragment {
     private int mSwitchModeStatus       = 0;    // Status of switch for manual capture.
 
     /**
-     *
+     *  Function responsible for inflating view
+     *  and setting listeners on user interface.
      *
      * @param inflater  layout XML instantiation object
      * @param container Viewgroup object
      * @param savedInstanceState Application context.
-     * @return
+     * @return  Inflated view.
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_control_ui, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_control_ui, container, false);  // Setup fragment layout.
 
         // Get Firebase data reference.
         mDatabase = FirebaseDatabase.getInstance().getReference();      // Get database reference.
         String time_temp = DateFormat.getDateTimeInstance().format(new Date());
-        data = new FirebaseData(mCamSeekProgress, mIntervalSeekProgress, mSwitchModeStatus, time_temp);
+        data = new FirebaseData(mCamSeekProgress, mIntervalSeekProgress, mSwitchModeStatus, time_temp); // Instantiating FirebaseData class. Holds members of realtime database.
 
         // Initializing UI objects.
         mCamPosSeekBar = (CircleSeekBar) rootView.findViewById(R.id.seekBar_position);
@@ -157,7 +159,7 @@ public class CameraControlFragment extends Fragment {
 
 
 
-        return rootView;
+        return rootView;    // Return the inflated View object.
     }
 
     /**

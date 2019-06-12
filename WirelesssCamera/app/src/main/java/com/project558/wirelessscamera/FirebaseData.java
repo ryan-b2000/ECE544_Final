@@ -1,3 +1,12 @@
+/**
+ * Name: Andrew Capatina
+ * Date: 6/11/19
+ *
+ * Used for retrieving and writing Firebase realtime database members.
+ *
+ *
+ */
+
 package com.project558.wirelessscamera;
 
 import com.google.firebase.database.Exclude;
@@ -21,10 +30,22 @@ public class FirebaseData {
     public int mIsManual;
     public String TIMESTAMP;
 
+    /**
+     * Cefualt constructor.
+     *
+     */
     public FirebaseData() {
         // Default constructor required for calls to DataSnapshot.getValue(FirebaseData.class)
     }
 
+    /**
+     * Constructor with arguments.
+     *
+     * @param camPos    Camera Position
+     * @param capRate   Camera capture rate.
+     * @param isManual  Manual mode indication.
+     * @param TIMESTAMP Timestamp of write.
+     */
     public FirebaseData(int camPos, int capRate, int isManual, String TIMESTAMP) {
         mCamPos = camPos;
         mCapRate = capRate;
@@ -32,7 +53,11 @@ public class FirebaseData {
         this.TIMESTAMP = TIMESTAMP;
     }
 
-    // Use this method for making the key value pair object for Firebase.
+    /**
+     * Sets instance members of class.
+     *
+     * @return Object with set instance members.
+     */
     @Exclude
     public Map<String, Object> toMap() {    // Creates appropriate object for updating Firebase.
         HashMap<String, Object> result = new HashMap<>();

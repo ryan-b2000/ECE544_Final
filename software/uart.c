@@ -1,4 +1,12 @@
-// - uart.c
+/**
+ * 	Ryan Bentz, Ryan Bornhorst, Andrew Capatina
+ * 	
+ * 	ECE 544 Final Project
+ * 	Wireless Android Camera
+ * 	06/11/2019
+ * 	
+ * 	
+ */
 
 #include "uart.h"
 #include <stdio.h>
@@ -10,14 +18,21 @@
 #include "xuartlite.h"
 #include "processing.h"
 
-#define TEST_BUFFER_SIZE 16
 
-XUartLite UartLite; /* Instance of the UartLite Device */
+/************************** Constant Definitions ****************************/
+#define UART_BUFFER_SIZE 16
 
-static u8 SendBuffer[TEST_BUFFER_SIZE];	/* Buffer for Transmitting Data */
-static u8 RecvBuffer[TEST_BUFFER_SIZE]; /* Buffer for Receiving Data */
+/************************** Constant Definitions ****************************/
+XUartLite UartLite; 						// Instance of the UartLite Device
+static u8 RecvBuffer[UART_BUFFER_SIZE]; 	// Buffer for Receiving Data
 
 
+/**
+ * @brief 	Initialize the UART
+ * @details Initializes the peripheral and performs the selftest
+ * 
+ * @param 	DeviceID is the UART device ID
+ */
 void uart_init(u16 DeviceId) {
 
 	u32 status;
@@ -41,22 +56,18 @@ void uart_init(u16 DeviceId) {
 	return;
 }
 
+
 /**
- * @brief Transmit a data buffer via the UART
- * @details We are going to send 76 bytes out of the UART. This function blocks until
- * 			the UART has finished sending all the bytes out.
- * 			
- * @param data the data buffer to send
- * @param numbytes number of bytes to send
+ * @brief 	Transmit a number of bytes 
+ * @details Writes the buffer to the UART FIFO for transmission
+ * 
+ * @param 	data is the buffer of the data to send
+ * @param 	numbytes the number of bytes in the buffer
  */
 void uart_transmit(u8 * data, u8 numbytes) {
 
-	u8 i, index, blocks, remain;
+
 	u32 sentcount;
-	u8 * buff;		// temporary buffer pointer to pass to UART
-
-
-	//index = 0;	 // set master index that iterates through entire data buffer
 
 	sentcount = XUartLite_Send(&UartLite, data, numbytes);
 	if (sentcount != numbytes) {
@@ -65,47 +76,17 @@ void uart_transmit(u8 * data, u8 numbytes) {
 }
 
 
-	/*
-	// we should be sending about 76 bytes per transmission. UART buffer can take 16 at a time
-	// so figure out how many 16-byte blocks we can send
-	blocks = numbytes / 16;
-	remain = numbytes - (blocks * 16);
-
-	// send the 16-byte blocks
-	for (i = 0; i < blocks; ++i) {
-		buff = (data + index);
-		// send the bytes
-		while (check_cts_pin() == OK_TO_SEND) {
-			sentcount = XUartLite_Send(&UartLite, buff, numbytes);
-			if (sentcount != numbytes) {
-				//xil_printf("Transmit failure. %d bytes not sent.\n", numbytes - sentcount);
-				return;
-			}
-			mySleep(10);
-		}
-		// incremenent master index 
-		++index;
-	}
-
-	// send the remainder bytes
-	if (remain > 0) {
-		buff = (data + index);
-		while (check_cts_pin() == OK_TO_SEND) {
-			sentcount = XUartLite_Send(&UartLite, buff, remain);
-			if (sentcount != numbytes) {
-				//xil_printf("Transmit failure. %d bytes not sent.\n", numbytes - sentcount);
-				return;
-			}
-		}
-		++index;
-	}
-
-}
-*/
-
+/**
+ * @brief 	Check the UART received buffer for incoming bytes
+ * @details Polls the UART receive buffer to see if data has been recieved.
+ * 			
+ * 
+ * @param 	data is filled with data upon valid return
+ * @return 	true if data recieved, false otherwise
+ */
 u8 uart_check_received(u8 * data){
 
-	unsigned int ReceivedCount;
+	unsigned int ReceivedCount = 0;
 
 	ReceivedCount += XUartLite_Recv(&UartLite, RecvBuffer + ReceivedCount, TEST_BUFFER_SIZE - ReceivedCount);
 
@@ -113,8 +94,8 @@ u8 uart_check_received(u8 * data){
 		for (int i = 0; i < ReceivedCount; i++) {
 			data[i] = RecvBuffer[i];
 		}
-		return 1;
+		return UART_RX_BUFF_DATA;
 	}
 
-	return 0;
+	return UART_RX_BUFF_EMPTY;
 }

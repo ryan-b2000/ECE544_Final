@@ -1,4 +1,14 @@
-// - init.c
+/**
+ * 	Ryan Bentz, Ryan Bornhorst, Andrew Capatina
+ * 	
+ * 	ECE 544 Final Project
+ * 	Wireless Android Camera
+ * 	06/11/2019
+ * 	
+ * 	init.c
+ * 	
+ * 	This file contains the implementation for the initialization functions.
+ */
 
 #include "init.h"
 
@@ -6,7 +16,7 @@
 
 int do_init(void)
 {
-	uint32_t status;				// status from Xilinx Lib calls
+	uint32_t status;	// status from Xilinx Lib calls
 
 	// initialize the Nexys4 driver and (some of)the devices
 	status = (uint32_t) NX4IO_initialize(NX4IO_BASEADDR);
@@ -94,7 +104,10 @@ int AXI_Timer_initialize(void){
 
 }
 
-
+/**
+ * @brief Camera initialization sequence
+ * @details Initialize the camera by writing to the registers through the SBCC bus.
+ */
 void init_camera() {
 
 	OV7670_initialize(CAMERA_BASEADDR);

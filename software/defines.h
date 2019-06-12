@@ -1,4 +1,12 @@
-// - defines.h
+/**
+ * 	Ryan Bentz, Ryan Bornhorst, Andrew Capatina
+ * 	
+ * 	ECE 544 Final Project
+ * 	Wireless Android Camera
+ * 	06/11/2019
+ * 	
+ * 	
+ */
 
 #include "xparameters.h"
 #include <stdint.h>
@@ -65,4 +73,5 @@ XTmrCtr		AXITimerInst;				// PWM timer instance
 XGpio		GPIOInst0;					// GPIO instance
 
 
+/************************** Function Prototypes ****************************/
 void mySleep(u32 micros);

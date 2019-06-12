@@ -43,7 +43,7 @@ void OV7670_unfreeze()
 
 void OV7670_setPixelWord(u32 address)
 {
-	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG2_OFFSET, wr_data);
+	CAMERAIP_mWriteReg(OV7670_BaseAddress, CAMERAIP_S00_AXI_SLV_REG2_OFFSET, address);
 }
 
 u32 OV7670_getPixelWord()

@@ -28,7 +28,7 @@
  * @note    Self test may fail if data memory and device are not on the same bus.
  *
  */
-XStatus CAMERAIP_Reg_SelfTest(void * baseaddr_p)
+XStatus CAMERAIP_Reg_SelfTest(u32 baseaddr_p)
 {
 	u32 baseaddr;
 	int write_loop_index;

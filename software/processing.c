@@ -1,5 +1,14 @@
-#include "processing.h"
+/**
+ *  Ryan Bentz, Ryan Bornhorst, Andrew Capatina
+ *  
+ *  ECE 544 Final Project
+ *  Wireless Android Camera
+ *  06/11/2019
+ *  
+ *  
+ */
 
+ #include "processing.h"
 
 
 /* ---- Base64 Encoding/Decoding Table --- */
@@ -7,22 +16,23 @@ static char b64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456
 
 
 
-u32 pixel_collector(uint16_t buff, u32 address) {
+/**
+ * @brief   Read pixels from the OV7670
+ * @details Fill the buffer with pixel words from the OV7670
+ * 
+ * @param   buff is filled with the new pixel words
+ * @param   address the address of where to start reading
+ * 
+ * @return  the next address to read from when the buffer is filled
+ */
+u32 pixel_collector(uint16_t * buff, u32 address) {
     
     u8 buff_limit;
 
-    // check if reading a full buffer will overflow the address
-    if ((address + 16) < FRAME_MAX_ADDRESS) {
-        buff_limit = SIZE_PIXEL_BUFF;
-    }
-    else {
-        buff_limit = FRAME_MAX_ADDRESS - address;
-    }
-
     // collect the pixel words from the camera
-    for(int i = 0; i < buff_limit; i++) {
+    for (int i = 0; i < SIZE_PIXEL_BUFF; i++) {
         OV7670_setPixelWord(address);
-        OV7670_getPixelWord();
+        buff[i] = OV7670_getPixelWord();
         address++;
     }
 
@@ -31,16 +41,19 @@ u32 pixel_collector(uint16_t buff, u32 address) {
 }
 
 
-void base64_encoder (uint16_t * in, uint8_t sizein, uint8_t * out, uint8_t sizeout) {
+/**
+ * @brief   Convert the pixel words to base64 encoded bytes
+ * @details Take in the buffer of pixel words. Split and encode bytes and assembler
+ *          into the output buffer as ASCII encoded bytes.
+ * 
+ * @param   in is the input buffer of pixel words
+ * @param   out is the buffer of ASCII encoded bits readyu for transmit
+ */
+void base64_encoder (uint16_t * in, uint8_t * out) {
 
     uint8_t i, index;
-    
-    
-    xil_printf("Input:\n");
-    for ( i = 0; i < sizein; i++) {
-        xil_printf("%X ", in[i]);
-    }
-
+    uint8_t sizein = SIZE_PIXEL_BUFF;
+    uint8_t sizeout = 2 * sizein;
 
     // split into groups of 6
     for (i = 0; i < sizein; i++) {
@@ -52,20 +65,37 @@ void base64_encoder (uint16_t * in, uint8_t sizein, uint8_t * out, uint8_t sizeo
         out[index] = in[i] & 0x3F;
     }
 
-    xil_printf("\nSplit...\n");
-    for (i = 0; i < sizeout; i++) {
-        xil_printf("%X ", out[i]);
-    }
-
     // convert to ascii 
-    xil_printf("\nConvert to ascii....\n");
     for (i = 0; i < sizeout; i++) {
         out[i] = b64[out[i]];
     }
 }
 
 
+/**
+ * @brief   Set the RTS pin for NodeMCU
+ * @details Setting the RTS pin lets the NodeMCU know when we are starting and stopping
+ *          an image transfer so it can let the Android app know.
+ *      
+ * @param   status is the new state of what to set the pin to
+ */
+void set_rts_pin(u8 status) {
 
+	if (status == OK_TO_SEND) {
+		XGpio_DiscreteWrite(&GPIOInst0, GPIO_0_OUTPUT_CHANNEL, 1);
+	}
+	else {
+		XGpio_DiscreteWrite(&GPIOInst0, GPIO_0_OUTPUT_CHANNEL, 0);
+	}
+
+}
+
+
+/**
+ * @brief   Check if OK to send more data 
+ * @details NodeMCU toggles Clear To Send pin when it is ready for another transfer
+ * @return  OK_TO_SEND if NodeMCU is ready for next transfer
+ */
 u8 check_cts_pin() {
 
 	// check clear to send signal from NodeMCU

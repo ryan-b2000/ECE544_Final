@@ -2,21 +2,25 @@
 //////////////////////////////////////////////////////////////////////////////////
 //
 // Module Name: i2c_sender
-// 
+//
+// Description: uses i2c interface to write values to camera registers
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 module i2c_sender(
     input clk,              // 50 MHz
-    input reset_n,
-    inout siod,
-    output reg sioc,
+    input reset_n,	    // reset
+    inout siod,		    // serial io
+    output reg sioc,	    // serial io
     output reg taken,       // thank you sir, may I have another
     input send,             // yes you may
     input [7:0] id,         // camera address
     input [7:0] register,   // config register address
     input [7:0] value       // config value to write
     );
-    
+  
+    localparam ONE = 6'b111111,TWO = 6'b111110,THREE = 6'b111100,FOUR = 6'b110000,FIVE = 6'b100000,IDLE = 6'b000000; 
+  
     reg [7:0] divider;      // transaction counter
     reg [31:0] busy_sr;     // busy signal
     reg [31:0] data_sr;     // transaction data
@@ -48,42 +52,42 @@ module i2c_sender(
                 // transactions start when sioc goes from high to low after siod goes low
                 // transactions stop when sioc and siod go high
                 case({busy_sr[31:29], busy_sr[2:0]})
-                    6'b111111:                      // sequence 1 -begin (sioc high)
+                    ONE:                      // sequence 1 -begin (sioc high)
                         case(divider[7:6])
                             2'b00: sioc <= 1'b1;
                             2'b01: sioc <= 1'b1;
                             2'b10: sioc <= 1'b1;
                             default: sioc <= 1'b1;
                         endcase
-                    6'b111110:                      // sequence 2 -begin (sioc high)
+                    TWO:                      // sequence 2 -begin (sioc high)
                         case(divider[7:6])
                             2'b00: sioc <= 1'b1;
                             2'b01: sioc <= 1'b1;
                             2'b10: sioc <= 1'b1;
                             default: sioc <= 1'b1;
                         endcase
-                    6'b111100:                      // sequence 3 -begin (sioc low)
+                    THREE:                      // sequence 3 -begin (sioc low)
                         case(divider[7:6])
                             2'b00: sioc <= 1'b0;
                             2'b01: sioc <= 1'b0;
                             2'b10: sioc <= 1'b0;
                             default: sioc <= 1'b0;
                         endcase
-                    6'b110000:                      // sequence 1 -end (sioc low->high)
+                    FOUR:                      // sequence 1 -end (sioc low->high)
                         case(divider[7:6])
                             2'b00: sioc <= 1'b0;
                             2'b01: sioc <= 1'b1;
                             2'b10: sioc <= 1'b1;
                             default: sioc <= 1'b1;
                         endcase
-                    6'b100000:                      // sequence 2 -end (sioc high)
+                    FIVE:                      // sequence 2 -end (sioc high)
                         case(divider[7:6])
                             2'b00: sioc <= 1'b1;
                             2'b01: sioc <= 1'b1;
                             2'b10: sioc <= 1'b1;
                             default: sioc <= 1'b1;
                         endcase
-                    6'b000000:                      // idle state (sioc high)
+                    IDLE:                      // idle state (sioc high)
                         case(divider[7:6])
                             2'b00: sioc <= 1'b1;
                             2'b01: sioc <= 1'b1;

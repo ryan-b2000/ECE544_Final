@@ -2,19 +2,21 @@
 //////////////////////////////////////////////////////////////////////////////////
 //
 // Module Name: OV7670_controller
+//
+// Description: Used to setup camera registers over I2C protocol
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
 module OV7670_controller(
     input clk,                  // 50 MHz
-    input reset_n,
+    input reset_n,		// reset
     input [15:0] command,       // i2c command
     output config_finished,     // output that config is complete
-    output sioc,
-    inout siod,
-    output cam_reset,
-    output pwdn,
-    output xclk,
+    output sioc,		// serial io
+    inout siod,			// serial io
+    output cam_reset,		// camera reset
+    output pwdn,		// camera powerdown
+    output xclk,		// camera clock
     output taken                // i2c is ready for new command
     );
    

@@ -1,55 +1,43 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 06/01/2019 02:42:15 PM
-// Design Name: 
+//
 // Module Name: OV7670_wrapper
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
+//
+// Description: Used for creating the Camera IP.
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
 
 module OV7670_wrapper(
-    input clk100,
-    input clk50,
-    input clk25,
-    input sysreset_n,
-    input OV7670_VSYNC,
-    input OV7670_HREF,
-    input OV7670_PCLK,
-    input [7:0] OV7670_DATA,
-    input [15:0] command,
-    inout OV7670_SIOD,
-    output OV7670_SIOC,
-    output OV7670_XCLK,
-    output OV7670_RESET,
-    output OV7670_PWDN,
-    output [3:0] vga_red,
-    output [3:0] vga_green,
-    output [3:0] vga_blue,
-    output vga_hsync,
-    output vga_vsync,
-    output [15:0] led,
-    input [11:0] frame_pixel,
-    output [18:0] frame_addr,
-    output [18:0] capture_addr,
-    output [11:0] capture_data,
-    output capture_we,
-    output taken,
-    input freeze_frame,
-    input [18:0] axi_address,
-    output [11:0] axi_pixel
+    input clk100,		// system clock
+    input clk50,		// 50MHz clock
+    input clk25,		// 25MHz clock
+    input sysreset_n,		// reset
+    input OV7670_VSYNC,		// camera vsync
+    input OV7670_HREF,		// camera href
+    input OV7670_PCLK,		// camera pclk
+    input [7:0] OV7670_DATA,	// camera data
+    input [15:0] command,	// command for I2C
+    inout OV7670_SIOD,		// camera siod
+    output OV7670_SIOC,		// camera sioc
+    output OV7670_XCLK,		// camera xclk
+    output OV7670_RESET,	// camera reset
+    output OV7670_PWDN,		// camera power down
+    output [3:0] vga_red,	// vga red
+    output [3:0] vga_green,	// vga green
+    output [3:0] vga_blue,	// vga blue
+    output vga_hsync,		// vga_hsync
+    output vga_vsync,		// vga_vsync
+    output [15:0] led,		// leds
+    input [11:0] frame_pixel,	// incoming frame pixel for vga
+    output [18:0] frame_addr,	// frame address to BRAM read
+    output [18:0] capture_addr,	// capture address to BRAM write
+    output [11:0] capture_data, // capture data written to BRAM
+    output capture_we,		// write enable
+    output taken,		// I2C ready
+    input freeze_frame,		// freeze the camera frame
+    input [18:0] axi_address,	// frame address to BRAM read from AXI
+    output [11:0] axi_pixel	// frame pixel from BRAM to AXI
     );
     
     // signal for showing camera has ran configuration
@@ -84,12 +72,18 @@ module OV7670_wrapper(
         .freeze_frame(freeze_frame)
     );
     
+    // these signals are used to multiplex the RAM address reads
+    // if a freeze frame signal comes through then control of the address
+    // is given to the AXI bus for reading the frame from the RAM
+    // otherwise the address is controlled by the camera capture to stream
+    // frames to the VGA display
     wire [18:0] frame_addr_w;
     wire [11:0] frame_pixel_w;
     assign axi_pixel = frame_pixel;
     assign frame_addr = (freeze_frame) ? axi_address : frame_addr_w;
     assign frame_pixel_w = (freeze_frame) ? 'bz : frame_pixel;
     
+    // signals used for VGA control
     wire nBlank;
     wire nSync;
     wire activeArea;
@@ -101,22 +95,14 @@ module OV7670_wrapper(
     vga vga (
         .clk25(clk25),
         .reset_n(sysreset_n),
-        /*
-        .vga_red(vga_red),
-        .vga_green(vga_green),
-        .vga_blue(vga_blue),
-        */
         .vga_hsync(vga_hsync),
         .vga_vsync(vSync),
         .nBlank(nBlank),
         .activeArea(activeArea),
         .nSync(nSync)
-        /*
-        .frame_addr(frame_addr_w),
-        .frame_pixel(frame_pixel_w)
-        */
-    );
+         );
     
+    // used to tell VGA that address is valid output
     address_valid address_valid (
         .clk25(clk25),
         .reset_n(sysreset_n),
@@ -124,12 +110,14 @@ module OV7670_wrapper(
         .vsync(vSync),
         .address(frame_addr_w)
     );
-    
+	
+    // values for storing RGB for VGA display    
     wire [7:0] red, green, blue;
     assign vga_red = red[7:4];
     assign vga_green = green[7:4];
     assign vga_blue = blue[7:4];
     
+    // if the address for VGA is valid, grab the RGB data
     rgb_valid rgb_valid (
         .data(frame_pixel_w),
         .nBlank(activeArea),

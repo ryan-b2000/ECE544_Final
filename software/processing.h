@@ -5,7 +5,9 @@
  * 	Wireless Android Camera
  * 	06/11/2019
  * 	
+ * 	processing.h
  * 	
+ * 	Prototypes for the image processing interface.
  */
 
 #include "stdint.h"

@@ -1,15 +1,17 @@
+/**
+ *  Ryan Bentz, Ryan Bornhorst, Andrew Capatina
+ *  ECE 544
+ *  Final Project
+ *  
+ *  Wireless Camera
+ *  
+ *  n4pga.sv
+ *  
+ *  This file contains the top-level module for FPGA.
+ */
+
 `timescale 1ns / 1ps
 
-// n4fpga.v - Top level module 
-//
-// Created By:	Ryan Bornhorst
-//
-// Description:
-// ------------
-// This module provides the top level for the hardware.
-// The module is designed to connect to a OV7670 Camera
-// and stream video through the VGA port using RGB565.
-//////////////////////////////////////////////////////////////////////
 module n4fpga(
     input				clk,			               // 100Mhz clock input
 	input				btnCpuReset,	               // CPU reset pushbutton
@@ -41,23 +43,10 @@ module n4fpga(
 wire				sysclk;             // 
 wire				sysreset_n;
 
-wire SPI_io0_i;
-wire SPI_io0_io;
 wire SPI_io0_o;
-wire SPI_io0_t;
-wire SPI_io1_i;
-wire SPI_io1_io;
 wire SPI_io1_o;
-wire SPI_io1_t;
-wire SPI_sck_i;
-wire SPI_sck_io;
-wire SPI_sck_o;
-wire SPI_sck_t;
 wire SPI_spisel;
-wire SPI_ss_i_0;
-wire SPI_ss_io_0;
 wire SPI_ss_o_0;
-wire SPI_ss_t;
 wire UART1_rxd;
 wire UART1_txd;
 wire uart_rts;
@@ -83,15 +72,13 @@ assign JA[7] = uart_cts;    // input
 embsys embsys
        (.GPIO_IN_tri_i(uart_cts),       // from NodeMCU => LOW = OK TO SEND
         .GPIO_OUT_tri_o(uart_rts),      // to NodeMCU
-        
-        //.SPI_io0_i(SPI_io0_i),
+        // SPI Intergace (not used)
         .SPI_io0_o(SPI_io0_o),
-        //.SPI_io1_i(SPI_io1_i),
         .SPI_io1_o(SPI_io1_o),
-        //.SPI_sck_i(SPI_sck_i),
         .SPI_sck_o(SPI_sck_o),
         .SPI_spisel(SPI_spisel),
         .SPI_ss_o(SPI_ss_o_0),
+        // UART Interface
         .UART1_rxd(UART1_rxd),
         .UART1_txd(UART1_txd),
         /* Camera Ports */

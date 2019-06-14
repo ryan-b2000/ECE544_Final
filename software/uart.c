@@ -5,7 +5,9 @@
  * 	Wireless Android Camera
  * 	06/11/2019
  * 	
+ * 	uart.c
  * 	
+ * 	Implementation for the UART interface.
  */
 
 #include "uart.h"

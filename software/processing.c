@@ -5,7 +5,10 @@
  *  Wireless Android Camera
  *  06/11/2019
  *  
+ *  processing.c
  *  
+ *  This file contains the implementation for the image processing functions. These methods
+ *  handle the pixel extraction, conversion, and packing.
  */
 
  #include "processing.h"

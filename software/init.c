@@ -13,7 +13,12 @@
 #include "init.h"
 
 
-
+/************************** Function Prototypes *****************************/
+/**
+ * @brief Initialize the system peripherals
+ * @details None
+ * @return XST_SUCCESS or FAILURE
+ */
 int do_init(void)
 {
 	uint32_t status;	// status from Xilinx Lib calls
@@ -68,9 +73,10 @@ int do_init(void)
 }
 
 
-/*
- * AXI timer initializes it to generate out a 4Khz signal, Which is given to the Nexys4IO module as clock input.
- * DO NOT MODIFY
+/**
+ * @brief Initializes the AXI Timer
+ * @details None
+ * @return XST_SUCCESS or FAILURE
  */
 int AXI_Timer_initialize(void){
 

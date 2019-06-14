@@ -17,8 +17,23 @@
 #include "uart.h"
 
 /************************** Function Prototypes *****************************/
-int	 do_init(void);											// initialize system
+/**
+ * @brief Initialize the system peripherals
+ * @details None
+ * @return XST_SUCCESS or FAILURE
+ */
+int	 do_init(void);											
 
+
+/**
+ * @brief Initializes the AXI Timer
+ * @details None
+ * @return XST_SUCCESS or FAILURE
+ */
 int AXI_Timer_initialize(void);
 
+/**
+ * @brief Initialize the camera peripheral
+ * @details Writes commands to the camera interface to set up the camera registers.
+ */
 void init_camera();

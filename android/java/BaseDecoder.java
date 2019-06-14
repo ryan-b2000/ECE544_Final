@@ -1,7 +1,9 @@
 /**
- * Class to decode a base64 encoded string
- * to it's color encoded values.
+ *  Names: Ryan Bentz, Ryan Bornhorst, Andrew Capatina
+ *  Date: 6/7/2019
  *
+ *  Responsible for the Base-64 decoding in Java. Class takes in two characters
+ *  and converts the value to its original RGB values.
  */
 package com.project558.wirelessscamera;
 

@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
                         mLastStr = mCurrentStr; // Save String last state.
 
                         if(tx_rx == 2 && mNumStringsProcessed > 0) {
-                            makeImage(mImageString);    // Convert the string gathered to an image.
+                            uploadImage(mImageString);    // Convert the string gathered to an image.
                         }
 
                     }
@@ -207,45 +207,13 @@ public class MainActivity extends AppCompatActivity implements PhotoGalleryFragm
      *
      * @param imageStr Has base64 encoded string.
      */
-    void makeImage (String imageStr) {
+    void uploadImage (String imageStr) {
 
-        Integer height = 120, width = 160, size;        // Fixed size of bitmap.
+		// Create the bitmap image from the RGB character string
+		mImageBitmap = id.CreateImage(imageStr);
 
-        // check the length of the string
-        if (imageStr != null || imageStr.length() == 0) {
-            while (width*height > imageStr.length()){
-                width--;
-                height--;
-            }
-        }
-
-        Bitmap mImageBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);    // Create a bitmap using RGB565 encoding.
-
-        for (Integer row = 0; row < width; ++row)
-            for (Integer col = 0; col < height; ++col) {
-                mImageBitmap.setPixel(row, col, Color.red(127));    // May be extra code, at this point just leave it here.
-                int displayed = Color.red(127);
-                int currentPixel = mImageBitmap.getPixel(row, col);
-            }
-
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        mImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-
-        BaseDecoder bd = new BaseDecoder();
-
-        char imageChar [] = imageStr.toCharArray();
-        int red, grn, blu;
-
-        int [] pixels = new int[height * width];
-        for (Integer i = 0; i < height*width; i+=2) {
-            red = bd.DecodeRed(imageChar[i], imageChar[i+1]) * 250;     // Colors for pixels.
-            grn = bd.DecodeGreen(imageChar[i], imageChar[i+1]) * 250;
-            blu = bd.DecodeBlue(imageChar[i], imageChar[i+1]) * 250;
-
-            pixels[i] = Color.rgb(red, grn, blu);
-        }
-        mImageBitmap.setPixels(pixels,0,width,0,0,width,height);    // Set pixels with appropriate colors.
-
+		if (mImageBitmap == null)
+			return;
 
         // Bitmap to byte array. https://stackoverflow.com/questions/13758560/android-bitmap-to-byte-array-and-back-skimagedecoderfactory-returned-null?lq=1
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

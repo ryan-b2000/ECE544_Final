@@ -1,15 +1,17 @@
+/**
+ *  Ryan Bentz, Ryan Bornhorst, Andrew Capatina
+ *  ECE 544
+ *  Final Project
+ *  
+ *  Wireless Camera
+ *  
+ *  n4pga.sv
+ *  
+ *  This file contains the top-level module for FPGA.
+ */
+
 `timescale 1ns / 1ps
 
-// n4fpga.v - Top level module 
-//
-// Created By:	Ryan Bornhorst
-//
-// Description:
-// ------------
-// This module provides the top level for the hardware.
-// The module is designed to connect to a OV7670 Camera
-// and stream video through the VGA port using RGB565.
-//////////////////////////////////////////////////////////////////////
 module n4fpga(
     input				clk,			               // 100Mhz clock input
 	input				btnCpuReset,	               // CPU reset pushbutton
@@ -32,7 +34,8 @@ module n4fpga(
     output              vga_hsync, vga_vsync,
     /* UART signals */
     input               uart_rtl_rxd,
-    output              uart_rtl_txd
+    output              uart_rtl_txd,
+    inout   [7:0]       JA
 );
 
 // internal variables
@@ -40,15 +43,46 @@ module n4fpga(
 wire				sysclk;             // 
 wire				sysreset_n;
 
+wire SPI_io0_o;
+wire SPI_io1_o;
+wire SPI_spisel;
+wire SPI_ss_o_0;
+wire UART1_rxd;
+wire UART1_txd;
+wire uart_rts;
+wire uart_cts;
+
 // make the connections
 // system-wide signals
 assign sysclk = clk;
-assign sysreset_n = btnCpuReset;      
+assign sysreset_n = btnCpuReset;    
+
+// PMOD JA
+assign JA[0] = SPI_io0_o;
+assign JA[1] = SPI_io1_o;
+assign JA[2] = SPI_sck_o;
+assign JA[3] = SPI_spisel;
+assign JA[4] = UART1_rxd;
+assign JA[5] = UART1_txd;
+assign JA[6] = uart_rts;    // output
+assign JA[7] = uart_cts;    // input
+
 
 // embedded system for the block design
 embsys embsys
+       (.GPIO_IN_tri_i(uart_cts),       // from NodeMCU => LOW = OK TO SEND
+        .GPIO_OUT_tri_o(uart_rts),      // to NodeMCU
+        // SPI Intergace (not used)
+        .SPI_io0_o(SPI_io0_o),
+        .SPI_io1_o(SPI_io1_o),
+        .SPI_sck_o(SPI_sck_o),
+        .SPI_spisel(SPI_spisel),
+        .SPI_ss_o(SPI_ss_o_0),
+        // UART Interface
+        .UART1_rxd(UART1_rxd),
+        .UART1_txd(UART1_txd),
         /* Camera Ports */
-       (.OV7670_DATA_0(OV7670_DATA),
+        .OV7670_DATA_0(OV7670_DATA),
         .OV7670_HREF_0(OV7670_HREF),
         .OV7670_PCLK_0(OV7670_PCLK),
         .OV7670_PWDN_0(OV7670_PWDN),

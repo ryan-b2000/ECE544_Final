@@ -5,7 +5,9 @@
  * 	Wireless Android Camera
  * 	06/11/2019
  * 	
+ * 	defines.h
  * 	
+ * 	This file contains global defines for he software system.
  */
 
 #include "xparameters.h"

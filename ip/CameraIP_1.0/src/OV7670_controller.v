@@ -5,6 +5,10 @@
 //
 // Description: Used to setup camera registers over I2C protocol
 // 
+// Team: Andrew Capatina, Ryan Bentz, Ryan Bornhorst
+//
+// Date: 6/13/19
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 module OV7670_controller(

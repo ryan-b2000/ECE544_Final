@@ -5,6 +5,10 @@
 //
 // Description: Updates the output address when vsync is valid
 //
+// Team: Andrew Capatina, Ryan Bentz, Ryan Bornhorst
+//
+// Date: 6/13/19
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 

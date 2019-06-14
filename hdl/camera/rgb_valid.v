@@ -5,6 +5,10 @@
 //
 // Description: Stores the rgb data for VGA when the pixel address is valid.
 // 
+// Team: Andrew Capatina, Ryan Bentz, Ryan Bornhorst
+//
+// Date: 6/13/19
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 

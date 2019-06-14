@@ -5,6 +5,10 @@
 //
 // Description: uses i2c interface to write values to camera registers
 //
+// Team: Andrew Capatina, Ryan Bentz, Ryan Bornhorst
+// 
+// Date: 6/13/19
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 module i2c_sender(

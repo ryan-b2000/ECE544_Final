@@ -4,6 +4,10 @@
 // Module Name: OV7670_wrapper
 //
 // Description: Used for creating the Camera IP.
+//
+// Team: Andrew Capatina, Ryan Bentz, Ryan Bornhorst
+//
+// Date: 6/13/19
 // 
 //////////////////////////////////////////////////////////////////////////////////
 

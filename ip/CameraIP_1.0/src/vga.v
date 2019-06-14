@@ -4,6 +4,10 @@
 // Module Name: vga
 //
 // Description: VGA controller that outputs the VGA signals to the VGA IO ports
+//
+// Team: Andrew Capatina, Ryan Bentz, Ryan Bornhorst
+// 
+// Date: 6/13/19
 // 
 //////////////////////////////////////////////////////////////////////////////////
 

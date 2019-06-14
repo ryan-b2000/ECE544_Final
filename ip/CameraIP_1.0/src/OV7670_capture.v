@@ -5,6 +5,10 @@
 //
 // Description: Allows the camera to capture a frame at a resolution of 
 //		160x120 pixels/frame
+//
+// Team: Andrew Capatina, Ryan Bentz, Ryan Bornhorst
+//
+// Date: 6/13/19
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
